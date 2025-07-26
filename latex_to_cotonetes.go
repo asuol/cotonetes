@@ -8,21 +8,10 @@ import (
 	"log"
 	"os"
 	"cotonetes/parser"
+	"cotonetes/utils"
 	"regexp"
 	"strings"
 )
-
-func user_confirmation(msg string) bool {
-	var i string
-	fmt.Println(msg, " [y/n]")
-	fmt.Scan(&i)
-	if i != "y" && i != "n" {
-		fmt.Println("Please answer with \"y\" or \"n\"")
-		return user_confirmation(msg)
-	}
-
-	return i == "y"
-}
 
 func main() {
 	db_path_ptr := flag.String("db", "cotonetes.db", "Path to new database file")
@@ -35,7 +24,7 @@ func main() {
 	}
 
 	if  _, error := os.Stat(*db_path_ptr); error == nil {
-		if user_confirmation(fmt.Sprintf("File %s already exists. Delete?", *db_path_ptr)) {
+		if utils.User_confirmation(fmt.Sprintf("File %s already exists. Delete?", *db_path_ptr)) {
 			if e := os.Remove(*db_path_ptr); e != nil {
 				log.Fatal(e)
 			}
@@ -57,10 +46,17 @@ func main() {
 	create table notes (id INTEGER PRIMARY KEY, title TEXT NOT NULL, url TEXT NOT NULL, created INTEGER NOT NULL, last_updated INTEGER NOT NULL, note TEXT NOT NULL);
 	create table note_categories (note_id INTEGER, category_id INTEGER, FOREIGN KEY(note_id) REFERENCES notes(id), FOREIGN KEY(category_id) REFERENCES categories(id), PRIMARY KEY(note_id, category_id));
 	`
-	_, err = db.Exec(create_tables_stmt)
+	tx, err := db.Begin()
 	if err != nil {
-		log.Printf("%q: %s\n", err, create_tables_stmt)
-		return
+		log.Fatal(err)
+	}
+
+	_, err = tx.Exec(create_tables_stmt)
+	if err != nil {
+		if rollbackErr := tx.Rollback(); rollbackErr != nil {
+			log.Fatalf("%q: unable to rollback: %q\n", err, rollbackErr)
+		}
+		log.Fatalf("%q: %s\n", err, create_tables_stmt)
 	}
 	file_notes := parser.Process_files(*latex_notes_path_ptr, "tex")
 
@@ -79,35 +75,43 @@ func main() {
 		var err error
 		var res sql.Result
 
-		if res, err = db.Exec(insert_category_stmt, category); err != nil {
-			log.Printf("%q: %s\n", err, insert_category_stmt)
-			return
+		if res, err = tx.Exec(insert_category_stmt, category); err != nil {
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				log.Fatalf("%q: unable to rollback: %q\n", err, rollbackErr)
+			}
+			log.Fatal("%q: %s\n", err, insert_category_stmt)
 		}
 
 		var cat_id int64
 
 		if cat_id, err = res.LastInsertId(); err != nil {
-			log.Printf("%q\n", err)
-			return
+			log.Fatal(err)
 		}
 
 		for _, note := range f.Notes {
-			if res, err = db.Exec(insert_note_stmt, note.Title, note.Url, note.Created_date, note.Updated_date, strings.Join(note.Text, "\n")); err != nil {
-				log.Printf("%q: %s\n", err, insert_note_stmt)
-				return
+			if res, err = tx.Exec(insert_note_stmt, note.Title, note.Url, note.Created_date, note.Updated_date, strings.Join(note.Text, "\n")); err != nil {
+				if rollbackErr := tx.Rollback(); rollbackErr != nil {
+					log.Fatalf("%q: unable to rollback: %q\n", err, rollbackErr)
+				}
+				log.Fatal("%q: %s\n", err, insert_note_stmt)
 			}
 
 			var note_id int64
 
 			if note_id, err = res.LastInsertId(); err != nil {
-				log.Printf("%q\n", err)
-				return
+				log.Fatal(err)
 			}
 
-			if res, err = db.Exec(insert_note_category_stmt, note_id, cat_id); err != nil {
-				log.Printf("%q: %s\n", err, insert_note_category_stmt)
-				return
+			if res, err = tx.Exec(insert_note_category_stmt, note_id, cat_id); err != nil {
+				if rollbackErr := tx.Rollback(); rollbackErr != nil {
+					log.Fatalf("%q: unable to rollback: %q\n", err, rollbackErr)
+				}
+				log.Fatal("%q: %s\n", err, insert_note_category_stmt)
 			}
 		}
+	}
+		
+	if err := tx.Commit(); err != nil {
+		log.Fatal(err)
 	}
 }

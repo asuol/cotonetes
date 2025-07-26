@@ -8,19 +8,18 @@ import (
 	"path/filepath"
 	"strings"
 	"regexp"
+	"cotonetes/types"
 )
-
-type Note struct {
-	Title string
-	Url string
-	Created_date string
-	Updated_date string
-	Text []string
-}
 
 type FileNotes struct {
 	File_path string
-	Notes []Note
+	Notes []types.Note
+}
+
+func escape_special_chars_to_markdown(line string) string {
+	special_re := regexp.MustCompile(`\\(.)`)
+
+	return special_re.ReplaceAllString(line, "$1")
 }
 
 func latex_note_title_to_txt(line string) string {
@@ -43,17 +42,17 @@ func latex_note_url_to_txt(line string) string {
 func latex_note_content_to_txt(latex_note []string) []string {
 	note := make([]string, 0)
 
-	command_re := regexp.MustCompile(`\\[^{]*{([^}]*)}`)
-	newline_re := regexp.MustCompile(`\\\\`)
-	special_re := regexp.MustCompile(`\\(.)`)
+	bold_re := regexp.MustCompile(`\\textbf{([^}]*)}`)
+	url_re := regexp.MustCompile(`\\url{([^}]*)}`)
 	item_re := regexp.MustCompile(`\\item (.*)`)
+	newline_re := regexp.MustCompile(`^ *\\\\ *$`)
 	is_itemize := false
 	is_enumerate := false
+	is_newline := false
 	count := 0
 
 	for _, line := range latex_note {
 		// replace blocks
-		// grep -rPo "begin{.*}" . | awk -F: '{print $2}' | sort -u
 		if line == `\begin{enumerate}` {
 			is_enumerate = true
 			count = 0
@@ -62,6 +61,7 @@ func latex_note_content_to_txt(latex_note []string) []string {
 			is_itemize = true
 			continue
 		} else if line == `\begin{verbatim}` {
+			note = append(note, "```")
 			continue
 		}
 
@@ -72,13 +72,23 @@ func latex_note_content_to_txt(latex_note []string) []string {
 			is_itemize = false
 			continue
 		} else if line == `\end{verbatim}` {
+			note = append(note, "```")
 			continue
 		}
 
-		if line == "" {
+		if !is_newline && line == "" {
 			continue
 		}
 
+		if is_newline {
+			is_newline = false
+		}
+
+		if newline_re.MatchString(line) {
+			is_newline = true
+			continue
+		}
+		
 		if is_enumerate {
 			count++
 			line = item_re.ReplaceAllString(line, fmt.Sprintf("%d. %s", count, "$1"))
@@ -87,11 +97,10 @@ func latex_note_content_to_txt(latex_note []string) []string {
 		}
 
 		// replace any \command{text} with text
-		line = command_re.ReplaceAllString(line, "$1")
-		// replace any \\ with \n
-		line = newline_re.ReplaceAllString(line, "\n")
+		line = bold_re.ReplaceAllString(line, "**$1**")
+		line = url_re.ReplaceAllString(line, "[$1]($1)")
 		// replace any \<symbol> with <symbol>
-		line = special_re.ReplaceAllString(line, "$1")
+		line = escape_special_chars_to_markdown(line)
 
 		note = append(note, line)
 	}
@@ -99,7 +108,7 @@ func latex_note_content_to_txt(latex_note []string) []string {
 	return note
 }
 
-func process_latex_file(file_path string) []Note {
+func process_latex_file(file_path string) []types.Note {
 	fmt.Println("Processing " + file_path)
 	f, err := os.Open(file_path)
 
@@ -113,7 +122,7 @@ func process_latex_file(file_path string) []Note {
 
 	is_note := false
 	cur_note := make([]string, 0, 20)
-	notes := make([]Note, 0)
+	notes := make([]types.Note, 0)
 
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -123,8 +132,8 @@ func process_latex_file(file_path string) []Note {
 		}
 		if is_note {
 			if strings.HasPrefix(line, "\\hrulefill") {
-				notes = append(notes, Note{
-					latex_note_title_to_txt(cur_note[0]),
+				notes = append(notes, types.Note{
+					escape_special_chars_to_markdown(latex_note_title_to_txt(cur_note[0])),
 					latex_note_url_to_txt(cur_note[1]),
 					latex_note_title_to_txt(cur_note[2]),
 					latex_note_title_to_txt(cur_note[3]),
@@ -156,12 +165,15 @@ func Process_files(folder_path string, extension string) []FileNotes {
 
 	for _, file := range files {
 		if file.IsDir() {
-			return Process_files(filepath.Join(folder_path, file.Name()), extension)
+			file_notes = append(file_notes, Process_files(filepath.Join(folder_path, file.Name()), extension)...)
 		} else {
 			switch extension {
 				case "tex":
 					file_path := filepath.Join(folder_path, file.Name())
-					file_notes = append(file_notes, FileNotes{file_path, process_latex_file(file_path)})
+					if filepath.Ext(file_path) == "." + extension {
+						file_notes = append(file_notes, FileNotes{file_path, process_latex_file(file_path)})
+					}
+					break
 			}
 		}
 	}
