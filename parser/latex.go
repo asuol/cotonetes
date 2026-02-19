@@ -44,49 +44,70 @@ func latex_note_content_to_txt(latex_note []string) []string {
 
 	bold_re := regexp.MustCompile(`\\textbf{([^}]*)}`)
 	url_re := regexp.MustCompile(`\\url{([^}]*)}`)
-	item_re := regexp.MustCompile(`\\item (.*)`)
+	item_re := regexp.MustCompile(`.*\\item (.*)`)
 	newline_re := regexp.MustCompile(`^ *\\\\ *$`)
+	inline_newline_re := regexp.MustCompile(`\\\\$`)
+	begin_enumerate_re := regexp.MustCompile(`^ *\\begin{enumerate} *$`)
+	begin_itemize_re := regexp.MustCompile(`^ *\\begin{itemize} *$`)
+	begin_verbatim_re := regexp.MustCompile(`^ *\\begin{verbatim} *$`)
+	end_enumerate_re := regexp.MustCompile(`^ *\\end{enumerate} *$`)
+	end_itemize_re := regexp.MustCompile(`^ *\\end{itemize} *$`)
+	end_verbatim_re := regexp.MustCompile(`^ *\\end{verbatim} *$`)
 	is_itemize := false
 	is_enumerate := false
-	is_newline := false
+	is_verbatim := false
 	count := 0
+	empty_line_count := 0
 
 	for _, line := range latex_note {
 		// replace blocks
-		if line == `\begin{enumerate}` {
+		if begin_enumerate_re.MatchString(line) {
 			is_enumerate = true
 			count = 0
 			continue
-		} else if line == `\begin{itemize}` {
+		} else if begin_itemize_re.MatchString(line) {
 			is_itemize = true
 			continue
-		} else if line == `\begin{verbatim}` {
+		} else if begin_verbatim_re.MatchString(line) {
 			note = append(note, "```")
+			is_verbatim = true
 			continue
 		}
 
-		if line == `\end{enumerate}` {
+		if end_enumerate_re.MatchString(line) {
 			is_enumerate = false
 			continue
-		} else if line == `\end{itemize}` {
+		} else if end_itemize_re.MatchString(line) {
 			is_itemize = false
 			continue
-		} else if line == `\end{verbatim}` {
+		} else if end_verbatim_re.MatchString(line) {
 			note = append(note, "```")
+			is_verbatim = false
 			continue
-		}
-
-		if !is_newline && line == "" {
-			continue
-		}
-
-		if is_newline {
-			is_newline = false
 		}
 
 		if newline_re.MatchString(line) {
-			is_newline = true
 			continue
+		}
+
+		if is_verbatim {
+			note = append(note, line)
+			continue
+		}
+
+		if strings.TrimSpace(line) == "" {
+			empty_line_count = empty_line_count + 1
+
+			if empty_line_count > 1 {
+				// ignore multiple empty lines
+				continue
+			}
+		} else {
+			empty_line_count = 0
+		}
+
+		if inline_newline_re.MatchString(line) {
+			line = inline_newline_re.ReplaceAllString(line, "$1")	
 		}
 		
 		if is_enumerate {
@@ -137,7 +158,7 @@ func process_latex_file(file_path string) []types.Note {
 					latex_note_url_to_txt(cur_note[1]),
 					latex_note_title_to_txt(cur_note[2]),
 					latex_note_title_to_txt(cur_note[3]),
-					latex_note_content_to_txt(cur_note[4:len(cur_note)-1]),
+					latex_note_content_to_txt(cur_note[4:len(cur_note)]),
 				})
 
 				cur_note = nil

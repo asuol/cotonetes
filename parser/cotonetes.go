@@ -26,24 +26,31 @@ func markdown_note_to_latex(markdown_note []string) []string {
 
 	bold_re := regexp.MustCompile(`\*\*([^*]*)\*\*`)
 	url_re := regexp.MustCompile(`\.*\[([^]]*)\]\(([^)]*)\)\.*`)
-	newline_re := regexp.MustCompile(`^$`)
+	newline_re := regexp.MustCompile(`^ *$`)
 	item_re := regexp.MustCompile(`^ *\* +(.*)$`)
 	num_re := regexp.MustCompile(`^ *[1-9]+\. +(.*)$`)
 	is_itemize := false
 	is_enumerate := false
 	is_verbatim := false
 
+	// Some notes have sections written as e.g. "1. something", followed by 1 or more paragraphs before a "2."
+	// These are not a numeric list, so we buffer potential enumerate blocks until we confirm if it is indeed a enumerate block
+	// otherwise leave the "1." tokens as is
+	is_num_buf := false
+	num_buffer := make([]string, 0)
+
 	for index, line := range markdown_note {
 		// replace blocks
 		if !is_enumerate && num_re.MatchString(line) {
 			is_enumerate = true
-			note = append(note, "\n" + `\begin{enumerate}`)
+			is_num_buf = true
+			num_buffer = append(num_buffer, `\begin{enumerate}` + "\n")
 		} else if !is_itemize && item_re.MatchString(line) {
 			is_itemize = true
-			note = append(note, "\n" + `\begin{itemize}`)
+			note = append(note, `\begin{itemize}` + "\n")
 		} else if !is_verbatim && line == "```" {
 			is_verbatim = true
-			note = append(note, `\begin{verbatim}`)
+			note = append(note, `\begin{verbatim}` + "\n")
 			continue
 		}
 
@@ -53,13 +60,21 @@ func markdown_note_to_latex(markdown_note []string) []string {
 
 		if is_enumerate && !num_re.MatchString(line) {
 			is_enumerate = false
-			note = append(note, `\end{enumerate}` + "\n")
+			// if the "enum" block has ended during the buffering phase, then it is a fake enumerate block
+			if is_num_buf {
+				note = append(note, num_buffer[1])
+				note = append(note, `\\` + "\n")
+				num_buffer = nil
+				is_num_buf = false
+			} else {
+				note = append(note, "\n" + `\end{enumerate}` + "\n")
+			}
 		} else if is_itemize && !item_re.MatchString(line) {
 			is_itemize = false
-			note = append(note, `\end{itemize}` + "\n")
+			note = append(note, "\n" + `\end{itemize}` + "\n")
 		} else if is_verbatim && line == "```" {
 			is_verbatim = false
-			note = append(note, `\end{verbatim}`)
+			note = append(note, "\n" + `\end{verbatim}` + "\n")
 			if len(markdown_note) == index + 1 {
 				// if this is the last line on the note, return here to avoid adding a \\ at the end of a verbatim block (which would be invalid latex syntax)
 				return note
@@ -69,7 +84,9 @@ func markdown_note_to_latex(markdown_note []string) []string {
 		}
 
 		if is_enumerate {
-			line = num_re.ReplaceAllString(line, fmt.Sprintf("\t\\item %s", "$1"))
+			if !is_num_buf {
+				line = num_re.ReplaceAllString(line, fmt.Sprintf("\t\\item %s", "$1"))
+			}
 		} else if is_itemize {
 			line = item_re.ReplaceAllString(line, fmt.Sprintf("\t\\item %s", "$1"))
 		} else if is_verbatim {
@@ -128,16 +145,34 @@ func markdown_note_to_latex(markdown_note []string) []string {
 		line = newline_re.ReplaceAllString(line, `\\` + "\n")
 		line = strings.ReplaceAll(line, `\*`, `*`)
 
-		note = append(note, line)
+		if is_num_buf {
+			num_buffer = append(num_buffer, line)
+			// If the buffer has more than two lines (begin + 1. line), then it is a real enumerate block
+			if len(num_buffer) > 2 {
+				for _, num := range num_buffer {
+					note = append(note, num_re.ReplaceAllString(num, fmt.Sprintf("\t\\item %s", "$1")))
+				}
+				is_num_buf = false
+				num_buffer = nil
+
+			}
+		} else {
+			note = append(note, line)
+		}
 	}
 
 	if is_enumerate {
-		note = append(note, `\end{enumerate}` + "\n")
+		// if the "enum" block has not ended during the buffering phase, then it is a real enumerate block
+		if is_num_buf {
+			note = append(note, num_re.ReplaceAllString(num_buffer[1], fmt.Sprintf("\t\\item %s", "$1")))
+			is_num_buf = false
+			num_buffer = nil
+		}
+
+		note = append(note, "\n" + `\end{enumerate}` + "\n")
 	} else if is_itemize {
-		note = append(note, `\end{itemize}` + "\n")
-	} else {
-		note = append(note, `\\` + "\n")
-	}
+		note = append(note, "\n" + `\end{itemize}`)
+	} 
 
 	return note
 }
