@@ -1,13 +1,13 @@
 package utils
 
 import (
-	"testing"
 	"cotonetes/types"
 	"reflect"
+	"testing"
 )
 
-type TestInput struct{
-	Latex types.Note
+type TestInput struct {
+	Latex    types.Note
 	Markdown types.Note
 }
 
@@ -46,7 +46,7 @@ func FailNotEquals(t *testing.T, message string, expected any, obtained any) {
 func FailNotEqualsSlice(t *testing.T, message string, expected []string, obtained []string) {
 	for index, line := range obtained {
 		if expected[index] != line {
-			t.Fatalf("%s:\n expected %+v\n obtained %+v\n full expected slice %+v\n full obtained slice %+v", message, expected[index], line, expected, obtained)
+			t.Fatalf("%s:\n expected \"%+v\"\n obtained \"%+v\"\n full expected slice %+v\n full obtained slice %+v", message, expected[index], line, expected, obtained)
 		}
 	}
 }

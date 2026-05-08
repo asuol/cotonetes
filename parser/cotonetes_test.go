@@ -1,22 +1,22 @@
 package parser
 
 import (
-	"os"
-	"testing"
+	"bufio"
 	"cotonetes/types"
 	"cotonetes/utils"
-	"bufio"
 	"log"
+	"os"
+	"strings"
+	"testing"
 )
 
-/* latexToCotonetes takes the input note, with text in markdown format,
-   calls the Export_to_latex function to generate a latex file and returns
-   a string slice containing the latex file lines
-*/
+// latexToCotonetes takes the input note, with text in markdown format,
+// calls the Export_to_latex function to generate a latex file and returns
+// a string slice containing the latex file lines
 func LatexToCotonetes(t *testing.T, note types.Note) ([]string, string) {
 	folder_path := t.TempDir()
 	file_path := folder_path + "/test.tex"
-	
+
 	err := Export_to_latex_file(file_path, "test", 0, []types.Note{note})
 
 	utils.FailNotEquals(t, "Failed export", nil, err)
@@ -54,7 +54,7 @@ func baseMarkdownParserTest(t *testing.T, test_input utils.TestInput) {
 		"",
 	}
 
-	expected_content = append(expected_content, utils.NoteToLatex(test_input.Latex)...)
+	expected_content = append(expected_content, strings.Join(utils.NoteToLatex(test_input.Latex), "\n"))
 
 	utils.FailNotEqualsSlice(t, "Failed to process note content line", expected_content, output_file_contents)
 }

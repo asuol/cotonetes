@@ -1,11 +1,11 @@
 package parser
 
 import (
-	"os"
-	"testing"
 	"cotonetes/types"
 	"cotonetes/utils"
 	"log"
+	"os"
+	"testing"
 )
 
 func createLatexFile(folder_path string, file_name string, note types.Note) {
@@ -41,13 +41,17 @@ func LatexParserTest(t *testing.T, folder_path string, expected_markdown types.N
 	utils.FailNotEquals(t, "Failed to process expected number of notes", 1, len(processed_notes[0].Notes))
 
 	processed_note := processed_notes[0].Notes[0]
-	
+
 	utils.FailNotEquals(t, "Failed to process note title", expected_markdown.Title, processed_note.Title)
 	utils.FailNotEquals(t, "Failed to process note url", expected_markdown.Url, processed_note.Url)
 	utils.FailNotEquals(t, "Failed to process note created date", expected_markdown.Created_date, processed_note.Created_date)
 	utils.FailNotEquals(t, "Failed to process note updated date", expected_markdown.Updated_date, processed_note.Updated_date)
 
-	utils.FailNotEqualsSlice(t, "Failed to process note content line", expected_markdown.Text, processed_note.Text)
+	emptyline, note_content := processed_note.Text[0], processed_note.Text[1:]
+
+	utils.FailNotEquals(t, "Failed to process note empty line preamble", "", emptyline)
+
+	utils.FailNotEqualsSlice(t, "Failed to process note content line", expected_markdown.Text, note_content)
 }
 
 func baseLatexParserTest(t *testing.T, test_input utils.TestInput) {
