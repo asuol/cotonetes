@@ -6,7 +6,6 @@ import (
 	"cotonetes/utils"
 	"log"
 	"os"
-	"strings"
 	"testing"
 )
 
@@ -54,7 +53,7 @@ func baseMarkdownParserTest(t *testing.T, test_input utils.TestInput) {
 		"",
 	}
 
-	expected_content = append(expected_content, strings.Join(utils.NoteToLatex(test_input.Latex), "\n"))
+	expected_content = append(expected_content, utils.NoteToLatex(test_input.Latex)...)
 
 	utils.FailNotEqualsSlice(t, "Failed to process note content line", expected_content, output_file_contents)
 }

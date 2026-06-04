@@ -38,8 +38,14 @@ type LatexListener interface {
 	// EnterEscaped_word is called when entering the escaped_word production.
 	EnterEscaped_word(c *Escaped_wordContext)
 
-	// EnterTag is called when entering the tag production.
-	EnterTag(c *TagContext)
+	// EnterComposite_tag_separator is called when entering the composite_tag_separator production.
+	EnterComposite_tag_separator(c *Composite_tag_separatorContext)
+
+	// EnterSimple_tag is called when entering the simple_tag production.
+	EnterSimple_tag(c *Simple_tagContext)
+
+	// EnterComposite_tag is called when entering the composite_tag production.
+	EnterComposite_tag(c *Composite_tagContext)
 
 	// EnterEscaped is called when entering the escaped production.
 	EnterEscaped(c *EscapedContext)
@@ -113,8 +119,14 @@ type LatexListener interface {
 	// ExitEscaped_word is called when exiting the escaped_word production.
 	ExitEscaped_word(c *Escaped_wordContext)
 
-	// ExitTag is called when exiting the tag production.
-	ExitTag(c *TagContext)
+	// ExitComposite_tag_separator is called when exiting the composite_tag_separator production.
+	ExitComposite_tag_separator(c *Composite_tag_separatorContext)
+
+	// ExitSimple_tag is called when exiting the simple_tag production.
+	ExitSimple_tag(c *Simple_tagContext)
+
+	// ExitComposite_tag is called when exiting the composite_tag production.
+	ExitComposite_tag(c *Composite_tagContext)
 
 	// ExitEscaped is called when exiting the escaped production.
 	ExitEscaped(c *EscapedContext)

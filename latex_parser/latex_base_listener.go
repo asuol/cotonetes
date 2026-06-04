@@ -80,11 +80,23 @@ func (s *BaseLatexListener) EnterEscaped_word(ctx *Escaped_wordContext) {}
 // ExitEscaped_word is called when production escaped_word is exited.
 func (s *BaseLatexListener) ExitEscaped_word(ctx *Escaped_wordContext) {}
 
-// EnterTag is called when production tag is entered.
-func (s *BaseLatexListener) EnterTag(ctx *TagContext) {}
+// EnterComposite_tag_separator is called when production composite_tag_separator is entered.
+func (s *BaseLatexListener) EnterComposite_tag_separator(ctx *Composite_tag_separatorContext) {}
 
-// ExitTag is called when production tag is exited.
-func (s *BaseLatexListener) ExitTag(ctx *TagContext) {}
+// ExitComposite_tag_separator is called when production composite_tag_separator is exited.
+func (s *BaseLatexListener) ExitComposite_tag_separator(ctx *Composite_tag_separatorContext) {}
+
+// EnterSimple_tag is called when production simple_tag is entered.
+func (s *BaseLatexListener) EnterSimple_tag(ctx *Simple_tagContext) {}
+
+// ExitSimple_tag is called when production simple_tag is exited.
+func (s *BaseLatexListener) ExitSimple_tag(ctx *Simple_tagContext) {}
+
+// EnterComposite_tag is called when production composite_tag is entered.
+func (s *BaseLatexListener) EnterComposite_tag(ctx *Composite_tagContext) {}
+
+// ExitComposite_tag is called when production composite_tag is exited.
+func (s *BaseLatexListener) ExitComposite_tag(ctx *Composite_tagContext) {}
 
 // EnterEscaped is called when production escaped is entered.
 func (s *BaseLatexListener) EnterEscaped(ctx *EscapedContext) {}

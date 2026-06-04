@@ -14,10 +14,11 @@ type TestInput struct {
 func NoteToLatex(note types.Note) []string {
 	latex := make([]string, 0)
 
-	latex = append(latex, `\textbf{Title:} ` + note.Title + `\\`)
-	latex = append(latex, `\textbf{URL:} \url{` + note.Url + `}\\`)
-	latex = append(latex, `\textbf{Created:} ` + note.Created_date + `\\`)
-	latex = append(latex, `\textbf{Last Updated:} ` + note.Updated_date + `\\`)
+	latex = append(latex, `\textbf{Title:} `+note.Title+`\\`)
+	latex = append(latex, `\textbf{URL:} \url{`+note.Url+`}\\`)
+	latex = append(latex, `\textbf{Created:} `+note.Created_date+`\\`)
+	latex = append(latex, `\textbf{Last Updated:} `+note.Updated_date+`\\`)
+
 	latex = append(latex, `\\`)
 
 	for _, line := range note.Text {

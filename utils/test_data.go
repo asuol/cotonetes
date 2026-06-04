@@ -63,7 +63,7 @@ var TdNoteUrl = TestInput{
 		"Sample update date",
 		[]string{
 			`some text with \url{link text} for test`,
-			`another line with another \url{link}`,
+			`another line with another \href{link}{link text}`,
 		},
 	},
 	types.Note{
@@ -73,12 +73,41 @@ var TdNoteUrl = TestInput{
 		"Sample update date",
 		[]string{
 			`some text with [link text](link text) for test`,
-			`another line with another [link](link)`,
+			`another line with another [link](link text)`,
 		},
 	},
 }
 
 var TdNoteNewline = TestInput{
+	types.Note{
+		`Sample title`,
+		"Sample url",
+		"Sample create date",
+		"Sample update date",
+		[]string{
+			`some text for test\\`,
+			``,
+			`another line with another\\`,
+			``,
+		},
+	},
+	types.Note{
+		`Sample title`,
+		"Sample url",
+		"Sample create date",
+		"Sample update date",
+		[]string{
+			`some text for test`,
+			``,
+			`another line with another`,
+			``,
+			``,
+		},
+	},
+}
+
+// This input data is meant only in the Latex -> Markdown direction
+var TdLatexNoteNewline = TestInput{
 	types.Note{
 		`Sample title`,
 		"Sample url",

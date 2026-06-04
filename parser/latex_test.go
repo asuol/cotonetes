@@ -81,7 +81,7 @@ func TestNoteUrl(t *testing.T) {
 }
 
 func TestNoteNewline(t *testing.T) {
-	baseLatexParserTest(t, utils.TdNoteNewline)
+	baseLatexParserTest(t, utils.TdLatexNoteNewline)
 }
 
 func TestNoteItemize(t *testing.T) {

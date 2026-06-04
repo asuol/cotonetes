@@ -48,21 +48,13 @@ type LatexListener struct {
 	Url                    string
 	Created                string
 	Updated                string
+	composite_first_val    string
 	Note                   []string
 	block_stack            []string
 	word_stack             []string
 	text_stack             []string
 	verbatim_content_stack []string
 	is_verbatim_block      bool
-}
-
-func (s *LatexListener) getTagValues(tag []antlr.Token) string {
-	values := make([]string, 0)
-	for _, tag := range tag {
-		values = append(values, tag.GetText())
-	}
-
-	return strings.Join(values, "")
 }
 
 func (s *LatexListener) getWord() string {
@@ -80,21 +72,42 @@ func (s *LatexListener) addParagraph() {
 	}
 }
 
-func (s *LatexListener) EnterTag(ctx *latex_parser.TagContext) {
+func (s *LatexListener) EnterSimple_tag(ctx *latex_parser.Simple_tagContext) {
 	if s.word_stack != nil {
 		s.text_stack = append(s.text_stack, s.getWord())
 	}
 }
 
-func (s *LatexListener) ExitTag(ctx *latex_parser.TagContext) {
+func (s *LatexListener) EnterComposite_tag(ctx *latex_parser.Composite_tagContext) {
+	if s.word_stack != nil {
+		s.text_stack = append(s.text_stack, s.getWord())
+	}
+}
+
+func (s *LatexListener) ExitSimple_tag(ctx *latex_parser.Simple_tagContext) {
 	tagVal := s.getWord()
 	switch ctx.GetName().GetText() {
 	case "textbf":
 		s.text_stack = append(s.text_stack, fmt.Sprintf("**%s**", tagVal))
 	case "url":
 		s.text_stack = append(s.text_stack, fmt.Sprintf("[%s](%s)", tagVal, tagVal))
+	case "href":
+		s.text_stack = append(s.text_stack, fmt.Sprintf("[%s](%s)", tagVal, tagVal))
 	default:
-		log.Fatalf("Unknown tag: %s", ctx.GetText())
+		log.Fatalf("Unknown simple tag: %s", ctx.GetText())
+	}
+}
+
+func (s *LatexListener) ExitComposite_tag_separator(ctx *latex_parser.Composite_tag_separatorContext) {
+	s.composite_first_val = s.getWord()
+}
+
+func (s *LatexListener) ExitComposite_tag(ctx *latex_parser.Composite_tagContext) {
+	switch ctx.GetName().GetText() {
+	case "href":
+		s.text_stack = append(s.text_stack, fmt.Sprintf("[%s](%s)", s.composite_first_val, s.getWord()))
+	default:
+		log.Fatalf("Unknown composite tag: %s", ctx.GetText())
 	}
 }
 

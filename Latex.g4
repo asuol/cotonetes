@@ -40,8 +40,13 @@ escaped_word
     : '\\' content=(LETTER | SYMBOL)+ space=WS* NEWLINE?
     ;
 
+composite_tag_separator
+    : '}{'
+    ;
+
 tag
-    : '\\' name=LETTER+ '{' word+ '}'
+    : '\\' name=LETTER+ '{' word+ '}'                                 #simple_tag
+    | '\\' name=LETTER+ '{' word+ composite_tag_separator word+ '}'   #composite_tag
     ;
 
 word

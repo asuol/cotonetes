@@ -1,11 +1,13 @@
 package parser
 
 import (
-	"fmt"
-	"os"
-	"log"
 	"bufio"
+	"cotonetes/markdown_parser"
 	"cotonetes/types"
+	"fmt"
+	"github.com/antlr4-go/antlr/v4"
+	"log"
+	"os"
 	"regexp"
 	"strings"
 )
@@ -21,160 +23,181 @@ func escape_special_chars(line string) string {
 	return line
 }
 
-func markdown_note_to_latex(markdown_note []string) []string {
-	note := make([]string, 0)
+type MarkdownListener struct {
+	*markdown_parser.BaseMarkdownListener
 
-	bold_re := regexp.MustCompile(`\*\*([^*]*)\*\*`)
-	url_re := regexp.MustCompile(`\.*\[([^]]*)\]\(([^)]*)\)\.*`)
-	newline_re := regexp.MustCompile(`^ *$`)
-	item_re := regexp.MustCompile(`^ *\* +(.*)$`)
-	num_re := regexp.MustCompile(`^ *[1-9]+\. +(.*)$`)
-	is_itemize := false
-	is_enumerate := false
-	is_verbatim := false
+	Note                   []string
+	block_stack            []string
+	word_stack             []string
+	text_stack             []string
+	url_title              string
+	url_value              string
+	verbatim_content_stack []string
+	is_verbatim_block      bool
+}
 
-	// Some notes have sections written as e.g. "1. something", followed by 1 or more paragraphs before a "2."
-	// These are not a numeric list, so we buffer potential enumerate blocks until we confirm if it is indeed a enumerate block
-	// otherwise leave the "1." tokens as is
-	is_num_buf := false
-	num_buffer := make([]string, 0)
+func (s *MarkdownListener) getWord() string {
+	word := strings.Join(s.word_stack, "")
 
-	for index, line := range markdown_note {
-		// replace blocks
-		if !is_enumerate && num_re.MatchString(line) {
-			is_enumerate = true
-			is_num_buf = true
-			num_buffer = append(num_buffer, `\begin{enumerate}` + "\n")
-		} else if !is_itemize && item_re.MatchString(line) {
-			is_itemize = true
-			note = append(note, `\begin{itemize}` + "\n")
-		} else if !is_verbatim && line == "```" {
-			is_verbatim = true
-			note = append(note, `\begin{verbatim}` + "\n")
-			continue
-		}
+	s.word_stack = nil
 
-		if (is_enumerate || is_itemize) && newline_re.MatchString(line) {
-			continue
-		}
+	return word
+}
 
-		if is_enumerate && !num_re.MatchString(line) {
-			is_enumerate = false
-			// if the "enum" block has ended during the buffering phase, then it is a fake enumerate block
-			if is_num_buf {
-				note = append(note, num_buffer[1])
-				note = append(note, `\\` + "\n")
-				num_buffer = nil
-				is_num_buf = false
-			} else {
-				note = append(note, "\n" + `\end{enumerate}` + "\n")
-			}
-		} else if is_itemize && !item_re.MatchString(line) {
-			is_itemize = false
-			note = append(note, "\n" + `\end{itemize}` + "\n")
-		} else if is_verbatim && line == "```" {
-			is_verbatim = false
-			note = append(note, "\n" + `\end{verbatim}` + "\n")
-			if len(markdown_note) == index + 1 {
-				// if this is the last line on the note, return here to avoid adding a \\ at the end of a verbatim block (which would be invalid latex syntax)
-				return note
-			} else {
-				continue
-			}
-		}
+func (s *MarkdownListener) EnterUrl(ctx *markdown_parser.UrlContext) {
+	if s.word_stack != nil {
+		s.text_stack = append(s.text_stack, s.getWord())
+	}
+}
 
-		if is_enumerate {
-			if !is_num_buf {
-				line = num_re.ReplaceAllString(line, fmt.Sprintf("\t\\item %s", "$1"))
-			}
-		} else if is_itemize {
-			line = item_re.ReplaceAllString(line, fmt.Sprintf("\t\\item %s", "$1"))
-		} else if is_verbatim {
-			note = append(note, line)
-			continue
-		}
+func (s *MarkdownListener) ExitUrl_title(ctx *markdown_parser.Url_titleContext) {
+	s.url_title = ctx.GetText()
+}
 
-		bold_matches := bold_re.FindAllString(line, -1)
+func (s *MarkdownListener) ExitUrl_value(ctx *markdown_parser.Url_valueContext) {
+	s.url_value = ctx.GetText()
+}
 
-		if len(bold_matches) > 0 {
-			non_bold_matches := bold_re.Split(line, -1)
+func (s *MarkdownListener) ExitUrl(ctx *markdown_parser.UrlContext) {
+	if s.url_value == s.url_title {
+		s.text_stack = append(s.text_stack, `\url{`+s.url_title+`}`)
 
-			line = non_bold_matches[0]
-			non_match_index := 1
+	} else {
+		s.text_stack = append(s.text_stack, `\href{`+s.url_title+`}{`+s.url_value+`}`)
+	}
+}
 
-			for _, match := range bold_matches {
-				bold_text := bold_re.FindStringSubmatch(match)[1]
+func (s *MarkdownListener) EnterBold(ctx *markdown_parser.BoldContext) {
+	if s.word_stack != nil {
+		s.text_stack = append(s.text_stack, s.getWord())
+	}
+}
 
-				line = line + `\textbf{` + bold_text + `}` + non_bold_matches[non_match_index]
+func (s *MarkdownListener) ExitBold(ctx *markdown_parser.BoldContext) {
+	s.text_stack = append(s.text_stack, `\textbf{`+s.getWord()+`}`)
+}
 
-				if non_match_index < len(non_bold_matches) - 1 {
-					non_match_index = non_match_index + 1
-				}
-			}
-		}
+func (s *MarkdownListener) ExitText(ctx *markdown_parser.TextContext) {
+	if s.word_stack != nil {
+		s.text_stack = append(s.text_stack, s.getWord())
+	}
+	s.Note = append(s.Note, strings.Join(s.text_stack, ""))
 
-		url_matches := url_re.FindAllString(line, -1)
+	s.text_stack = nil
+}
 
-		// we do not want to replace any symbols that are part of an URL
-		line = escape_special_chars(line)
+func (s *MarkdownListener) ExitSymbol(ctx *markdown_parser.SymbolContext) {
+	if s.is_verbatim_block {
+		s.word_stack = append(s.word_stack, ctx.GetText())
+	} else {
+		s.word_stack = append(s.word_stack, `\`+ctx.GetText())
+	}
+}
 
-		if len(url_matches) > 0 {
-			non_url_matches := url_re.Split(line, -1)
+func (s *MarkdownListener) ExitLetter(ctx *markdown_parser.LetterContext) {
+	s.word_stack = append(s.word_stack, ctx.GetText())
+}
 
-			line = non_url_matches[0]
-			non_match_index := 1
+func (s *MarkdownListener) ExitPunctuation(ctx *markdown_parser.PunctuationContext) {
+	s.word_stack = append(s.word_stack, ctx.GetText())
+}
 
-			for _, match := range url_matches {
-				url_parts := url_re.FindStringSubmatch(match)
+func (s *MarkdownListener) ExitBackslash(ctx *markdown_parser.BackslashContext) {
+	s.word_stack = append(s.word_stack, ctx.GetText())
+}
 
-				url_text := url_parts[1]
-				url_url := url_parts[2]
+func (s *MarkdownListener) ExitSquare(ctx *markdown_parser.SquareContext) {
+	s.word_stack = append(s.word_stack, ctx.GetText())
+}
 
-				if url_text == url_url {
-					line = line + `\url{` + url_url + `}` + non_url_matches[non_match_index]
-				} else {
-					line = line + `\url{` + url_url + `} (` + url_text + `)` + non_url_matches[non_match_index]
-				}
+func (s *MarkdownListener) ExitRound(ctx *markdown_parser.RoundContext) {
+	s.word_stack = append(s.word_stack, ctx.GetText())
+}
 
-				if non_match_index < len(non_url_matches) - 1 {
-					non_match_index = non_match_index + 1
-				}
-			}
-		}
+func (s *MarkdownListener) ExitNumber(ctx *markdown_parser.NumberContext) {
+	s.word_stack = append(s.word_stack, ctx.GetText())
+}
 
-		line = newline_re.ReplaceAllString(line, `\\` + "\n")
-		line = strings.ReplaceAll(line, `\*`, `*`)
+func (s *MarkdownListener) ExitWs(ctx *markdown_parser.WsContext) {
+	s.word_stack = append(s.word_stack, ctx.GetText())
+}
 
-		if is_num_buf {
-			num_buffer = append(num_buffer, line)
-			// If the buffer has more than two lines (begin + 1. line), then it is a real enumerate block
-			if len(num_buffer) > 2 {
-				for _, num := range num_buffer {
-					note = append(note, num_re.ReplaceAllString(num, fmt.Sprintf("\t\\item %s", "$1")))
-				}
-				is_num_buf = false
-				num_buffer = nil
+func (s *MarkdownListener) ExitEmpty_line(ctx *markdown_parser.Empty_lineContext) {
+	note_count := len(s.Note)
 
-			}
-		} else {
-			note = append(note, line)
-		}
+	if note_count > 0 {
+		s.Note[note_count-1] += `\\`
 	}
 
-	if is_enumerate {
-		// if the "enum" block has not ended during the buffering phase, then it is a real enumerate block
-		if is_num_buf {
-			note = append(note, num_re.ReplaceAllString(num_buffer[1], fmt.Sprintf("\t\\item %s", "$1")))
-			is_num_buf = false
-			num_buffer = nil
-		}
+	s.Note = append(s.Note, "")
+}
 
-		note = append(note, "\n" + `\end{enumerate}` + "\n")
-	} else if is_itemize {
-		note = append(note, "\n" + `\end{itemize}`)
-	} 
+func (s *MarkdownListener) ExitItem_line(ctx *markdown_parser.Item_lineContext) {
+	s.block_stack = append(s.block_stack, s.getWord())
+}
 
-	return note
+func (s *MarkdownListener) ExitNumber_line(ctx *markdown_parser.Number_lineContext) {
+	s.block_stack = append(s.block_stack, s.getWord())
+}
+
+func (s *MarkdownListener) ExitVerbatim_line(ctx *markdown_parser.Verbatim_lineContext) {
+	s.block_stack = append(s.block_stack, s.getWord())
+}
+
+func (s *MarkdownListener) ExitItemize(ctx *markdown_parser.ItemizeContext) {
+	s.Note = append(s.Note, fmt.Sprintf(`\begin{itemize}`))
+	for _, item := range s.block_stack {
+		s.Note = append(s.Note, fmt.Sprintf("\\item %s", item))
+	}
+	s.Note = append(s.Note, fmt.Sprintf(`\end{itemize}`))
+
+	s.block_stack = nil
+}
+
+func (s *MarkdownListener) ExitEnumerate(ctx *markdown_parser.EnumerateContext) {
+	s.Note = append(s.Note, fmt.Sprintf(`\begin{enumerate}`))
+	for _, item := range s.block_stack {
+		s.Note = append(s.Note, fmt.Sprintf("\\item %s", item))
+	}
+	s.Note = append(s.Note, fmt.Sprintf(`\end{enumerate}`))
+
+	s.block_stack = nil
+}
+
+func (s *MarkdownListener) EnterVerbatim(ctx *markdown_parser.VerbatimContext) {
+	s.is_verbatim_block = true
+}
+
+func (s *MarkdownListener) ExitVerbatim(ctx *markdown_parser.VerbatimContext) {
+	s.Note = append(s.Note, fmt.Sprintf(`\begin{verbatim}`))
+	for _, line := range s.block_stack {
+		s.Note = append(s.Note, line)
+	}
+	s.Note = append(s.Note, fmt.Sprintf(`\end{verbatim}`))
+
+	s.block_stack = nil
+
+	s.is_verbatim_block = false
+}
+
+func markdown_note_to_latex(markdown_note []string) []string {
+	// Setup the input, replicating a text file (lines ending with newline)
+	is := antlr.NewInputStream(strings.Join(markdown_note, "\n"))
+
+	// Create the Lexer
+	lexer := markdown_parser.NewMarkdownLexer(is)
+
+	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
+
+	// Create the Parser
+	p := markdown_parser.NewMarkdownParser(stream)
+
+	var listener MarkdownListener
+
+	// Finally parse the expression
+	antlr.ParseTreeWalkerDefault.Walk(&listener, p.Markdown())
+
+	return listener.Note
 }
 
 func Export_to_latex_file(file_path string, section_name string, sub_section_index int, note_list []types.Note) error {
@@ -195,12 +218,12 @@ func Export_to_latex_file(file_path string, section_name string, sub_section_ind
 		return err
 	}
 
-	for _, note := range(note_list) {
+	for _, note := range note_list {
 		if _, err = writer.WriteString(`\textbf{Title:} ` + escape_special_chars(note.Title) + `\\` + "\n"); err != nil {
 			return err
 		}
 
-		if _, err = writer.WriteString(`\textbf{URL:} \url{` + note.Url + `}\\` +  "\n"); err != nil {
+		if _, err = writer.WriteString(`\textbf{URL:} \url{` + note.Url + `}\\` + "\n"); err != nil {
 			return err
 		}
 
@@ -218,7 +241,7 @@ func Export_to_latex_file(file_path string, section_name string, sub_section_ind
 			}
 		}
 
-		if _, err = writer.WriteString(`\hrulefill` + "\n" + `\\` + "\n\n"); err !=nil {
+		if _, err = writer.WriteString(`\hrulefill` + "\n" + `\\` + "\n\n"); err != nil {
 			return err
 		}
 	}
