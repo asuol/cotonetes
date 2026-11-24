@@ -86,6 +86,12 @@ func (s *BaseLatexListener) EnterComposite_tag_separator(ctx *Composite_tag_sepa
 // ExitComposite_tag_separator is called when production composite_tag_separator is exited.
 func (s *BaseLatexListener) ExitComposite_tag_separator(ctx *Composite_tag_separatorContext) {}
 
+// EnterUrl_tag is called when production url_tag is entered.
+func (s *BaseLatexListener) EnterUrl_tag(ctx *Url_tagContext) {}
+
+// ExitUrl_tag is called when production url_tag is exited.
+func (s *BaseLatexListener) ExitUrl_tag(ctx *Url_tagContext) {}
+
 // EnterSimple_tag is called when production simple_tag is entered.
 func (s *BaseLatexListener) EnterSimple_tag(ctx *Simple_tagContext) {}
 
@@ -140,17 +146,41 @@ func (s *BaseLatexListener) EnterVerbatim_symbol(ctx *Verbatim_symbolContext) {}
 // ExitVerbatim_symbol is called when production verbatim_symbol is exited.
 func (s *BaseLatexListener) ExitVerbatim_symbol(ctx *Verbatim_symbolContext) {}
 
+// EnterVerbatim_special is called when production verbatim_special is entered.
+func (s *BaseLatexListener) EnterVerbatim_special(ctx *Verbatim_specialContext) {}
+
+// ExitVerbatim_special is called when production verbatim_special is exited.
+func (s *BaseLatexListener) ExitVerbatim_special(ctx *Verbatim_specialContext) {}
+
 // EnterVerbatim_linebreak is called when production verbatim_linebreak is entered.
 func (s *BaseLatexListener) EnterVerbatim_linebreak(ctx *Verbatim_linebreakContext) {}
 
 // ExitVerbatim_linebreak is called when production verbatim_linebreak is exited.
 func (s *BaseLatexListener) ExitVerbatim_linebreak(ctx *Verbatim_linebreakContext) {}
 
+// EnterCurly_parens is called when production curly_parens is entered.
+func (s *BaseLatexListener) EnterCurly_parens(ctx *Curly_parensContext) {}
+
+// ExitCurly_parens is called when production curly_parens is exited.
+func (s *BaseLatexListener) ExitCurly_parens(ctx *Curly_parensContext) {}
+
+// EnterVerbatim_block_content is called when production verbatim_block_content is entered.
+func (s *BaseLatexListener) EnterVerbatim_block_content(ctx *Verbatim_block_contentContext) {}
+
+// ExitVerbatim_block_content is called when production verbatim_block_content is exited.
+func (s *BaseLatexListener) ExitVerbatim_block_content(ctx *Verbatim_block_contentContext) {}
+
 // EnterVerbatim_line is called when production verbatim_line is entered.
 func (s *BaseLatexListener) EnterVerbatim_line(ctx *Verbatim_lineContext) {}
 
 // ExitVerbatim_line is called when production verbatim_line is exited.
 func (s *BaseLatexListener) ExitVerbatim_line(ctx *Verbatim_lineContext) {}
+
+// EnterBlock_content is called when production block_content is entered.
+func (s *BaseLatexListener) EnterBlock_content(ctx *Block_contentContext) {}
+
+// ExitBlock_content is called when production block_content is exited.
+func (s *BaseLatexListener) ExitBlock_content(ctx *Block_contentContext) {}
 
 // EnterBlock_line is called when production block_line is entered.
 func (s *BaseLatexListener) EnterBlock_line(ctx *Block_lineContext) {}

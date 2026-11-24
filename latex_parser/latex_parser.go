@@ -34,153 +34,173 @@ func latexParserInit() {
   staticData := &LatexParserStaticData
   staticData.LiteralNames = []string{
     "", "'\\textbf{Title:}'", "'\\\\'", "'\\textbf{URL:} \\url{'", "'}'", 
-    "'\\textbf{Created:}'", "'\\textbf{Last Updated:}'", "'\\'", "'}{'", 
-    "'{'", "'\\item'", "'\\begin{itemize}'", "'\\end{itemize}'", "'\\begin{enumerate}'", 
-    "'\\end{enumerate}'", "'\\begin{verbatim}'", "'\\end{verbatim}'", "", 
-    "", "", "", "'\\n'", "", "'\\r'",
+    "'\\textbf{Created:}'", "'\\textbf{Last Updated:}'", "'{'", "'}{'", 
+    "'\\url{'", "'\\'", "'\\item'", "'\\begin{itemize}'", "'\\end{itemize}'", 
+    "'\\begin{enumerate}'", "'\\end{enumerate}'", "'\\begin{verbatim}'", 
+    "'\\end{verbatim}'", "", "", "", "", "'\\n'", "", "'\\r'",
   }
   staticData.SymbolicNames = []string{
     "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 
-    "LETTER", "PUNCTUATION", "SYMBOL", "NUMBER", "NEWLINE", "WS", "CR",
+    "", "LETTER", "SPECIAL", "SYMBOL", "NUMBER", "NEWLINE", "WS", "CR", 
+    "PUNCTUATION", "EXTENDED_UNICODE",
   }
   staticData.RuleNames = []string{
     "latex", "note_title", "note_url", "note_created", "note_updated", "note_text", 
     "text", "line_break", "empty_line", "escaped_word", "composite_tag_separator", 
-    "tag", "word", "verbatim_content", "verbatim_line", "block_line", "block_item", 
-    "block",
+    "tag", "word", "verbatim_content", "curly_parens", "verbatim_block_content", 
+    "verbatim_line", "block_content", "block_line", "block_item", "block",
   }
   staticData.PredictionContextCache = antlr.NewPredictionContextCache()
   staticData.serializedATN = []int32{
-	4, 1, 23, 282, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2, 4, 7, 
+	4, 1, 26, 322, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2, 4, 7, 
 	4, 2, 5, 7, 5, 2, 6, 7, 6, 2, 7, 7, 7, 2, 8, 7, 8, 2, 9, 7, 9, 2, 10, 7, 
 	10, 2, 11, 7, 11, 2, 12, 7, 12, 2, 13, 7, 13, 2, 14, 7, 14, 2, 15, 7, 15, 
-	2, 16, 7, 16, 2, 17, 7, 17, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 5, 0, 43, 
-	8, 0, 10, 0, 12, 0, 46, 9, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 5, 1, 53, 8, 
-	1, 10, 1, 12, 1, 56, 9, 1, 1, 1, 4, 1, 59, 8, 1, 11, 1, 12, 1, 60, 1, 1, 
-	1, 1, 3, 1, 65, 8, 1, 1, 2, 1, 2, 4, 2, 69, 8, 2, 11, 2, 12, 2, 70, 1, 
-	2, 1, 2, 1, 2, 3, 2, 76, 8, 2, 1, 3, 1, 3, 5, 3, 80, 8, 3, 10, 3, 12, 3, 
-	83, 9, 3, 1, 3, 4, 3, 86, 8, 3, 11, 3, 12, 3, 87, 1, 3, 1, 3, 3, 3, 92, 
-	8, 3, 1, 4, 1, 4, 5, 4, 96, 8, 4, 10, 4, 12, 4, 99, 9, 4, 1, 4, 4, 4, 102, 
-	8, 4, 11, 4, 12, 4, 103, 1, 4, 1, 4, 3, 4, 108, 8, 4, 1, 5, 1, 5, 1, 5, 
-	1, 5, 5, 5, 114, 8, 5, 10, 5, 12, 5, 117, 9, 5, 1, 6, 1, 6, 4, 6, 121, 
-	8, 6, 11, 6, 12, 6, 122, 1, 6, 3, 6, 126, 8, 6, 1, 7, 1, 7, 5, 7, 130, 
-	8, 7, 10, 7, 12, 7, 133, 9, 7, 1, 8, 4, 8, 136, 8, 8, 11, 8, 12, 8, 137, 
-	1, 9, 1, 9, 4, 9, 142, 8, 9, 11, 9, 12, 9, 143, 1, 9, 5, 9, 147, 8, 9, 
-	10, 9, 12, 9, 150, 9, 9, 1, 9, 3, 9, 153, 8, 9, 1, 10, 1, 10, 1, 11, 1, 
-	11, 4, 11, 159, 8, 11, 11, 11, 12, 11, 160, 1, 11, 1, 11, 4, 11, 165, 8, 
-	11, 11, 11, 12, 11, 166, 1, 11, 1, 11, 1, 11, 1, 11, 4, 11, 173, 8, 11, 
-	11, 11, 12, 11, 174, 1, 11, 1, 11, 4, 11, 179, 8, 11, 11, 11, 12, 11, 180, 
-	1, 11, 1, 11, 4, 11, 185, 8, 11, 11, 11, 12, 11, 186, 1, 11, 1, 11, 3, 
-	11, 191, 8, 11, 1, 12, 1, 12, 1, 12, 1, 12, 1, 12, 3, 12, 198, 8, 12, 1, 
-	13, 1, 13, 1, 13, 3, 13, 203, 8, 13, 1, 14, 5, 14, 206, 8, 14, 10, 14, 
-	12, 14, 209, 9, 14, 1, 14, 1, 14, 1, 15, 4, 15, 214, 8, 15, 11, 15, 12, 
-	15, 215, 1, 15, 4, 15, 219, 8, 15, 11, 15, 12, 15, 220, 1, 16, 1, 16, 5, 
-	16, 225, 8, 16, 10, 16, 12, 16, 228, 9, 16, 1, 16, 1, 16, 1, 17, 1, 17, 
-	5, 17, 234, 8, 17, 10, 17, 12, 17, 237, 9, 17, 1, 17, 5, 17, 240, 8, 17, 
-	10, 17, 12, 17, 243, 9, 17, 1, 17, 1, 17, 3, 17, 247, 8, 17, 1, 17, 1, 
-	17, 5, 17, 251, 8, 17, 10, 17, 12, 17, 254, 9, 17, 1, 17, 5, 17, 257, 8, 
-	17, 10, 17, 12, 17, 260, 9, 17, 1, 17, 1, 17, 3, 17, 264, 8, 17, 1, 17, 
-	1, 17, 3, 17, 268, 8, 17, 1, 17, 5, 17, 271, 8, 17, 10, 17, 12, 17, 274, 
-	9, 17, 1, 17, 1, 17, 3, 17, 278, 8, 17, 3, 17, 280, 8, 17, 1, 17, 0, 0, 
-	18, 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 
-	0, 1, 2, 0, 17, 17, 19, 19, 314, 0, 36, 1, 0, 0, 0, 2, 50, 1, 0, 0, 0, 
-	4, 66, 1, 0, 0, 0, 6, 77, 1, 0, 0, 0, 8, 93, 1, 0, 0, 0, 10, 115, 1, 0, 
-	0, 0, 12, 120, 1, 0, 0, 0, 14, 127, 1, 0, 0, 0, 16, 135, 1, 0, 0, 0, 18, 
-	139, 1, 0, 0, 0, 20, 154, 1, 0, 0, 0, 22, 190, 1, 0, 0, 0, 24, 197, 1, 
-	0, 0, 0, 26, 202, 1, 0, 0, 0, 28, 207, 1, 0, 0, 0, 30, 213, 1, 0, 0, 0, 
-	32, 222, 1, 0, 0, 0, 34, 279, 1, 0, 0, 0, 36, 37, 3, 2, 1, 0, 37, 38, 3, 
-	4, 2, 0, 38, 39, 3, 6, 3, 0, 39, 40, 3, 8, 4, 0, 40, 44, 3, 14, 7, 0, 41, 
-	43, 5, 21, 0, 0, 42, 41, 1, 0, 0, 0, 43, 46, 1, 0, 0, 0, 44, 42, 1, 0, 
-	0, 0, 44, 45, 1, 0, 0, 0, 45, 47, 1, 0, 0, 0, 46, 44, 1, 0, 0, 0, 47, 48, 
-	3, 10, 5, 0, 48, 49, 5, 0, 0, 1, 49, 1, 1, 0, 0, 0, 50, 54, 5, 1, 0, 0, 
-	51, 53, 5, 22, 0, 0, 52, 51, 1, 0, 0, 0, 53, 56, 1, 0, 0, 0, 54, 52, 1, 
-	0, 0, 0, 54, 55, 1, 0, 0, 0, 55, 58, 1, 0, 0, 0, 56, 54, 1, 0, 0, 0, 57, 
-	59, 3, 24, 12, 0, 58, 57, 1, 0, 0, 0, 59, 60, 1, 0, 0, 0, 60, 58, 1, 0, 
-	0, 0, 60, 61, 1, 0, 0, 0, 61, 62, 1, 0, 0, 0, 62, 64, 5, 2, 0, 0, 63, 65, 
-	5, 21, 0, 0, 64, 63, 1, 0, 0, 0, 64, 65, 1, 0, 0, 0, 65, 3, 1, 0, 0, 0, 
-	66, 68, 5, 3, 0, 0, 67, 69, 3, 24, 12, 0, 68, 67, 1, 0, 0, 0, 69, 70, 1, 
-	0, 0, 0, 70, 68, 1, 0, 0, 0, 70, 71, 1, 0, 0, 0, 71, 72, 1, 0, 0, 0, 72, 
-	73, 5, 4, 0, 0, 73, 75, 5, 2, 0, 0, 74, 76, 5, 21, 0, 0, 75, 74, 1, 0, 
-	0, 0, 75, 76, 1, 0, 0, 0, 76, 5, 1, 0, 0, 0, 77, 81, 5, 5, 0, 0, 78, 80, 
-	5, 22, 0, 0, 79, 78, 1, 0, 0, 0, 80, 83, 1, 0, 0, 0, 81, 79, 1, 0, 0, 0, 
-	81, 82, 1, 0, 0, 0, 82, 85, 1, 0, 0, 0, 83, 81, 1, 0, 0, 0, 84, 86, 3, 
-	24, 12, 0, 85, 84, 1, 0, 0, 0, 86, 87, 1, 0, 0, 0, 87, 85, 1, 0, 0, 0, 
-	87, 88, 1, 0, 0, 0, 88, 89, 1, 0, 0, 0, 89, 91, 5, 2, 0, 0, 90, 92, 5, 
-	21, 0, 0, 91, 90, 1, 0, 0, 0, 91, 92, 1, 0, 0, 0, 92, 7, 1, 0, 0, 0, 93, 
-	97, 5, 6, 0, 0, 94, 96, 5, 22, 0, 0, 95, 94, 1, 0, 0, 0, 96, 99, 1, 0, 
-	0, 0, 97, 95, 1, 0, 0, 0, 97, 98, 1, 0, 0, 0, 98, 101, 1, 0, 0, 0, 99, 
-	97, 1, 0, 0, 0, 100, 102, 3, 24, 12, 0, 101, 100, 1, 0, 0, 0, 102, 103, 
-	1, 0, 0, 0, 103, 101, 1, 0, 0, 0, 103, 104, 1, 0, 0, 0, 104, 105, 1, 0, 
-	0, 0, 105, 107, 5, 2, 0, 0, 106, 108, 5, 21, 0, 0, 107, 106, 1, 0, 0, 0, 
-	107, 108, 1, 0, 0, 0, 108, 9, 1, 0, 0, 0, 109, 114, 3, 12, 6, 0, 110, 114, 
-	3, 34, 17, 0, 111, 114, 3, 14, 7, 0, 112, 114, 3, 16, 8, 0, 113, 109, 1, 
-	0, 0, 0, 113, 110, 1, 0, 0, 0, 113, 111, 1, 0, 0, 0, 113, 112, 1, 0, 0, 
-	0, 114, 117, 1, 0, 0, 0, 115, 113, 1, 0, 0, 0, 115, 116, 1, 0, 0, 0, 116, 
-	11, 1, 0, 0, 0, 117, 115, 1, 0, 0, 0, 118, 121, 3, 22, 11, 0, 119, 121, 
-	3, 24, 12, 0, 120, 118, 1, 0, 0, 0, 120, 119, 1, 0, 0, 0, 121, 122, 1, 
-	0, 0, 0, 122, 120, 1, 0, 0, 0, 122, 123, 1, 0, 0, 0, 123, 125, 1, 0, 0, 
-	0, 124, 126, 5, 21, 0, 0, 125, 124, 1, 0, 0, 0, 125, 126, 1, 0, 0, 0, 126, 
-	13, 1, 0, 0, 0, 127, 131, 5, 2, 0, 0, 128, 130, 5, 22, 0, 0, 129, 128, 
-	1, 0, 0, 0, 130, 133, 1, 0, 0, 0, 131, 129, 1, 0, 0, 0, 131, 132, 1, 0, 
-	0, 0, 132, 15, 1, 0, 0, 0, 133, 131, 1, 0, 0, 0, 134, 136, 5, 21, 0, 0, 
-	135, 134, 1, 0, 0, 0, 136, 137, 1, 0, 0, 0, 137, 135, 1, 0, 0, 0, 137, 
-	138, 1, 0, 0, 0, 138, 17, 1, 0, 0, 0, 139, 141, 5, 7, 0, 0, 140, 142, 7, 
-	0, 0, 0, 141, 140, 1, 0, 0, 0, 142, 143, 1, 0, 0, 0, 143, 141, 1, 0, 0, 
-	0, 143, 144, 1, 0, 0, 0, 144, 148, 1, 0, 0, 0, 145, 147, 5, 22, 0, 0, 146, 
-	145, 1, 0, 0, 0, 147, 150, 1, 0, 0, 0, 148, 146, 1, 0, 0, 0, 148, 149, 
-	1, 0, 0, 0, 149, 152, 1, 0, 0, 0, 150, 148, 1, 0, 0, 0, 151, 153, 5, 21, 
-	0, 0, 152, 151, 1, 0, 0, 0, 152, 153, 1, 0, 0, 0, 153, 19, 1, 0, 0, 0, 
-	154, 155, 5, 8, 0, 0, 155, 21, 1, 0, 0, 0, 156, 158, 5, 7, 0, 0, 157, 159, 
-	5, 17, 0, 0, 158, 157, 1, 0, 0, 0, 159, 160, 1, 0, 0, 0, 160, 158, 1, 0, 
-	0, 0, 160, 161, 1, 0, 0, 0, 161, 162, 1, 0, 0, 0, 162, 164, 5, 9, 0, 0, 
-	163, 165, 3, 24, 12, 0, 164, 163, 1, 0, 0, 0, 165, 166, 1, 0, 0, 0, 166, 
-	164, 1, 0, 0, 0, 166, 167, 1, 0, 0, 0, 167, 168, 1, 0, 0, 0, 168, 169, 
-	5, 4, 0, 0, 169, 191, 1, 0, 0, 0, 170, 172, 5, 7, 0, 0, 171, 173, 5, 17, 
-	0, 0, 172, 171, 1, 0, 0, 0, 173, 174, 1, 0, 0, 0, 174, 172, 1, 0, 0, 0, 
-	174, 175, 1, 0, 0, 0, 175, 176, 1, 0, 0, 0, 176, 178, 5, 9, 0, 0, 177, 
-	179, 3, 24, 12, 0, 178, 177, 1, 0, 0, 0, 179, 180, 1, 0, 0, 0, 180, 178, 
-	1, 0, 0, 0, 180, 181, 1, 0, 0, 0, 181, 182, 1, 0, 0, 0, 182, 184, 3, 20, 
-	10, 0, 183, 185, 3, 24, 12, 0, 184, 183, 1, 0, 0, 0, 185, 186, 1, 0, 0, 
-	0, 186, 184, 1, 0, 0, 0, 186, 187, 1, 0, 0, 0, 187, 188, 1, 0, 0, 0, 188, 
-	189, 5, 4, 0, 0, 189, 191, 1, 0, 0, 0, 190, 156, 1, 0, 0, 0, 190, 170, 
-	1, 0, 0, 0, 191, 23, 1, 0, 0, 0, 192, 198, 3, 18, 9, 0, 193, 198, 5, 17, 
-	0, 0, 194, 198, 5, 18, 0, 0, 195, 198, 5, 20, 0, 0, 196, 198, 5, 22, 0, 
-	0, 197, 192, 1, 0, 0, 0, 197, 193, 1, 0, 0, 0, 197, 194, 1, 0, 0, 0, 197, 
-	195, 1, 0, 0, 0, 197, 196, 1, 0, 0, 0, 198, 25, 1, 0, 0, 0, 199, 203, 3, 
-	24, 12, 0, 200, 203, 5, 19, 0, 0, 201, 203, 3, 14, 7, 0, 202, 199, 1, 0, 
-	0, 0, 202, 200, 1, 0, 0, 0, 202, 201, 1, 0, 0, 0, 203, 27, 1, 0, 0, 0, 
-	204, 206, 3, 26, 13, 0, 205, 204, 1, 0, 0, 0, 206, 209, 1, 0, 0, 0, 207, 
-	205, 1, 0, 0, 0, 207, 208, 1, 0, 0, 0, 208, 210, 1, 0, 0, 0, 209, 207, 
-	1, 0, 0, 0, 210, 211, 5, 21, 0, 0, 211, 29, 1, 0, 0, 0, 212, 214, 3, 24, 
-	12, 0, 213, 212, 1, 0, 0, 0, 214, 215, 1, 0, 0, 0, 215, 213, 1, 0, 0, 0, 
-	215, 216, 1, 0, 0, 0, 216, 218, 1, 0, 0, 0, 217, 219, 5, 21, 0, 0, 218, 
-	217, 1, 0, 0, 0, 219, 220, 1, 0, 0, 0, 220, 218, 1, 0, 0, 0, 220, 221, 
-	1, 0, 0, 0, 221, 31, 1, 0, 0, 0, 222, 226, 5, 10, 0, 0, 223, 225, 5, 22, 
-	0, 0, 224, 223, 1, 0, 0, 0, 225, 228, 1, 0, 0, 0, 226, 224, 1, 0, 0, 0, 
-	226, 227, 1, 0, 0, 0, 227, 229, 1, 0, 0, 0, 228, 226, 1, 0, 0, 0, 229, 
-	230, 3, 30, 15, 0, 230, 33, 1, 0, 0, 0, 231, 235, 5, 11, 0, 0, 232, 234, 
-	5, 21, 0, 0, 233, 232, 1, 0, 0, 0, 234, 237, 1, 0, 0, 0, 235, 233, 1, 0, 
-	0, 0, 235, 236, 1, 0, 0, 0, 236, 241, 1, 0, 0, 0, 237, 235, 1, 0, 0, 0, 
-	238, 240, 3, 32, 16, 0, 239, 238, 1, 0, 0, 0, 240, 243, 1, 0, 0, 0, 241, 
-	239, 1, 0, 0, 0, 241, 242, 1, 0, 0, 0, 242, 244, 1, 0, 0, 0, 243, 241, 
-	1, 0, 0, 0, 244, 246, 5, 12, 0, 0, 245, 247, 5, 21, 0, 0, 246, 245, 1, 
-	0, 0, 0, 246, 247, 1, 0, 0, 0, 247, 280, 1, 0, 0, 0, 248, 252, 5, 13, 0, 
-	0, 249, 251, 5, 21, 0, 0, 250, 249, 1, 0, 0, 0, 251, 254, 1, 0, 0, 0, 252, 
-	250, 1, 0, 0, 0, 252, 253, 1, 0, 0, 0, 253, 258, 1, 0, 0, 0, 254, 252, 
-	1, 0, 0, 0, 255, 257, 3, 32, 16, 0, 256, 255, 1, 0, 0, 0, 257, 260, 1, 
-	0, 0, 0, 258, 256, 1, 0, 0, 0, 258, 259, 1, 0, 0, 0, 259, 261, 1, 0, 0, 
-	0, 260, 258, 1, 0, 0, 0, 261, 263, 5, 14, 0, 0, 262, 264, 5, 21, 0, 0, 
-	263, 262, 1, 0, 0, 0, 263, 264, 1, 0, 0, 0, 264, 280, 1, 0, 0, 0, 265, 
-	267, 5, 15, 0, 0, 266, 268, 5, 21, 0, 0, 267, 266, 1, 0, 0, 0, 267, 268, 
-	1, 0, 0, 0, 268, 272, 1, 0, 0, 0, 269, 271, 3, 28, 14, 0, 270, 269, 1, 
-	0, 0, 0, 271, 274, 1, 0, 0, 0, 272, 270, 1, 0, 0, 0, 272, 273, 1, 0, 0, 
-	0, 273, 275, 1, 0, 0, 0, 274, 272, 1, 0, 0, 0, 275, 277, 5, 16, 0, 0, 276, 
-	278, 5, 21, 0, 0, 277, 276, 1, 0, 0, 0, 277, 278, 1, 0, 0, 0, 278, 280, 
-	1, 0, 0, 0, 279, 231, 1, 0, 0, 0, 279, 248, 1, 0, 0, 0, 279, 265, 1, 0, 
-	0, 0, 280, 35, 1, 0, 0, 0, 44, 44, 54, 60, 64, 70, 75, 81, 87, 91, 97, 
-	103, 107, 113, 115, 120, 122, 125, 131, 137, 143, 148, 152, 160, 166, 174, 
-	180, 186, 190, 197, 202, 207, 215, 220, 226, 235, 241, 246, 252, 258, 263, 
-	267, 272, 277, 279,
+	2, 16, 7, 16, 2, 17, 7, 17, 2, 18, 7, 18, 2, 19, 7, 19, 2, 20, 7, 20, 1, 
+	0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 5, 0, 49, 8, 0, 10, 0, 12, 0, 52, 9, 0, 
+	1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 5, 1, 59, 8, 1, 10, 1, 12, 1, 62, 9, 1, 1, 
+	1, 4, 1, 65, 8, 1, 11, 1, 12, 1, 66, 1, 1, 1, 1, 3, 1, 71, 8, 1, 1, 2, 
+	1, 2, 4, 2, 75, 8, 2, 11, 2, 12, 2, 76, 1, 2, 1, 2, 1, 2, 3, 2, 82, 8, 
+	2, 1, 3, 1, 3, 5, 3, 86, 8, 3, 10, 3, 12, 3, 89, 9, 3, 1, 3, 4, 3, 92, 
+	8, 3, 11, 3, 12, 3, 93, 1, 3, 1, 3, 3, 3, 98, 8, 3, 1, 4, 1, 4, 5, 4, 102, 
+	8, 4, 10, 4, 12, 4, 105, 9, 4, 1, 4, 4, 4, 108, 8, 4, 11, 4, 12, 4, 109, 
+	1, 4, 1, 4, 3, 4, 114, 8, 4, 1, 5, 1, 5, 1, 5, 1, 5, 5, 5, 120, 8, 5, 10, 
+	5, 12, 5, 123, 9, 5, 1, 6, 1, 6, 4, 6, 127, 8, 6, 11, 6, 12, 6, 128, 1, 
+	6, 3, 6, 132, 8, 6, 1, 7, 1, 7, 5, 7, 136, 8, 7, 10, 7, 12, 7, 139, 9, 
+	7, 1, 8, 4, 8, 142, 8, 8, 11, 8, 12, 8, 143, 1, 9, 4, 9, 147, 8, 9, 11, 
+	9, 12, 9, 148, 1, 9, 5, 9, 152, 8, 9, 10, 9, 12, 9, 155, 9, 9, 1, 9, 1, 
+	9, 5, 9, 159, 8, 9, 10, 9, 12, 9, 162, 9, 9, 3, 9, 164, 8, 9, 1, 10, 1, 
+	10, 1, 11, 1, 11, 4, 11, 170, 8, 11, 11, 11, 12, 11, 171, 1, 11, 1, 11, 
+	1, 11, 1, 11, 4, 11, 178, 8, 11, 11, 11, 12, 11, 179, 1, 11, 1, 11, 4, 
+	11, 184, 8, 11, 11, 11, 12, 11, 185, 1, 11, 1, 11, 1, 11, 1, 11, 4, 11, 
+	192, 8, 11, 11, 11, 12, 11, 193, 1, 11, 1, 11, 4, 11, 198, 8, 11, 11, 11, 
+	12, 11, 199, 1, 11, 1, 11, 4, 11, 204, 8, 11, 11, 11, 12, 11, 205, 1, 11, 
+	1, 11, 3, 11, 210, 8, 11, 1, 12, 1, 12, 3, 12, 214, 8, 12, 1, 12, 1, 12, 
+	1, 12, 1, 12, 3, 12, 220, 8, 12, 1, 13, 1, 13, 1, 13, 1, 13, 3, 13, 226, 
+	8, 13, 1, 14, 1, 14, 1, 15, 1, 15, 3, 15, 232, 8, 15, 1, 16, 5, 16, 235, 
+	8, 16, 10, 16, 12, 16, 238, 9, 16, 1, 16, 1, 16, 1, 17, 1, 17, 1, 17, 3, 
+	17, 245, 8, 17, 1, 18, 4, 18, 248, 8, 18, 11, 18, 12, 18, 249, 1, 18, 4, 
+	18, 253, 8, 18, 11, 18, 12, 18, 254, 1, 19, 5, 19, 258, 8, 19, 10, 19, 
+	12, 19, 261, 9, 19, 1, 19, 1, 19, 5, 19, 265, 8, 19, 10, 19, 12, 19, 268, 
+	9, 19, 1, 19, 1, 19, 1, 20, 1, 20, 5, 20, 274, 8, 20, 10, 20, 12, 20, 277, 
+	9, 20, 1, 20, 5, 20, 280, 8, 20, 10, 20, 12, 20, 283, 9, 20, 1, 20, 1, 
+	20, 3, 20, 287, 8, 20, 1, 20, 1, 20, 5, 20, 291, 8, 20, 10, 20, 12, 20, 
+	294, 9, 20, 1, 20, 5, 20, 297, 8, 20, 10, 20, 12, 20, 300, 9, 20, 1, 20, 
+	1, 20, 3, 20, 304, 8, 20, 1, 20, 1, 20, 3, 20, 308, 8, 20, 1, 20, 5, 20, 
+	311, 8, 20, 10, 20, 12, 20, 314, 9, 20, 1, 20, 1, 20, 3, 20, 318, 8, 20, 
+	3, 20, 320, 8, 20, 1, 20, 0, 0, 21, 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 
+	20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 0, 3, 3, 0, 4, 4, 7, 7, 20, 
+	20, 1, 0, 25, 26, 2, 0, 4, 4, 7, 7, 360, 0, 42, 1, 0, 0, 0, 2, 56, 1, 0, 
+	0, 0, 4, 72, 1, 0, 0, 0, 6, 83, 1, 0, 0, 0, 8, 99, 1, 0, 0, 0, 10, 121, 
+	1, 0, 0, 0, 12, 126, 1, 0, 0, 0, 14, 133, 1, 0, 0, 0, 16, 141, 1, 0, 0, 
+	0, 18, 163, 1, 0, 0, 0, 20, 165, 1, 0, 0, 0, 22, 209, 1, 0, 0, 0, 24, 219, 
+	1, 0, 0, 0, 26, 225, 1, 0, 0, 0, 28, 227, 1, 0, 0, 0, 30, 231, 1, 0, 0, 
+	0, 32, 236, 1, 0, 0, 0, 34, 244, 1, 0, 0, 0, 36, 247, 1, 0, 0, 0, 38, 259, 
+	1, 0, 0, 0, 40, 319, 1, 0, 0, 0, 42, 43, 3, 2, 1, 0, 43, 44, 3, 4, 2, 0, 
+	44, 45, 3, 6, 3, 0, 45, 46, 3, 8, 4, 0, 46, 50, 3, 14, 7, 0, 47, 49, 5, 
+	22, 0, 0, 48, 47, 1, 0, 0, 0, 49, 52, 1, 0, 0, 0, 50, 48, 1, 0, 0, 0, 50, 
+	51, 1, 0, 0, 0, 51, 53, 1, 0, 0, 0, 52, 50, 1, 0, 0, 0, 53, 54, 3, 10, 
+	5, 0, 54, 55, 5, 0, 0, 1, 55, 1, 1, 0, 0, 0, 56, 60, 5, 1, 0, 0, 57, 59, 
+	5, 23, 0, 0, 58, 57, 1, 0, 0, 0, 59, 62, 1, 0, 0, 0, 60, 58, 1, 0, 0, 0, 
+	60, 61, 1, 0, 0, 0, 61, 64, 1, 0, 0, 0, 62, 60, 1, 0, 0, 0, 63, 65, 3, 
+	24, 12, 0, 64, 63, 1, 0, 0, 0, 65, 66, 1, 0, 0, 0, 66, 64, 1, 0, 0, 0, 
+	66, 67, 1, 0, 0, 0, 67, 68, 1, 0, 0, 0, 68, 70, 5, 2, 0, 0, 69, 71, 5, 
+	22, 0, 0, 70, 69, 1, 0, 0, 0, 70, 71, 1, 0, 0, 0, 71, 3, 1, 0, 0, 0, 72, 
+	74, 5, 3, 0, 0, 73, 75, 3, 26, 13, 0, 74, 73, 1, 0, 0, 0, 75, 76, 1, 0, 
+	0, 0, 76, 74, 1, 0, 0, 0, 76, 77, 1, 0, 0, 0, 77, 78, 1, 0, 0, 0, 78, 79, 
+	5, 4, 0, 0, 79, 81, 5, 2, 0, 0, 80, 82, 5, 22, 0, 0, 81, 80, 1, 0, 0, 0, 
+	81, 82, 1, 0, 0, 0, 82, 5, 1, 0, 0, 0, 83, 87, 5, 5, 0, 0, 84, 86, 5, 23, 
+	0, 0, 85, 84, 1, 0, 0, 0, 86, 89, 1, 0, 0, 0, 87, 85, 1, 0, 0, 0, 87, 88, 
+	1, 0, 0, 0, 88, 91, 1, 0, 0, 0, 89, 87, 1, 0, 0, 0, 90, 92, 3, 24, 12, 
+	0, 91, 90, 1, 0, 0, 0, 92, 93, 1, 0, 0, 0, 93, 91, 1, 0, 0, 0, 93, 94, 
+	1, 0, 0, 0, 94, 95, 1, 0, 0, 0, 95, 97, 5, 2, 0, 0, 96, 98, 5, 22, 0, 0, 
+	97, 96, 1, 0, 0, 0, 97, 98, 1, 0, 0, 0, 98, 7, 1, 0, 0, 0, 99, 103, 5, 
+	6, 0, 0, 100, 102, 5, 23, 0, 0, 101, 100, 1, 0, 0, 0, 102, 105, 1, 0, 0, 
+	0, 103, 101, 1, 0, 0, 0, 103, 104, 1, 0, 0, 0, 104, 107, 1, 0, 0, 0, 105, 
+	103, 1, 0, 0, 0, 106, 108, 3, 24, 12, 0, 107, 106, 1, 0, 0, 0, 108, 109, 
+	1, 0, 0, 0, 109, 107, 1, 0, 0, 0, 109, 110, 1, 0, 0, 0, 110, 111, 1, 0, 
+	0, 0, 111, 113, 5, 2, 0, 0, 112, 114, 5, 22, 0, 0, 113, 112, 1, 0, 0, 0, 
+	113, 114, 1, 0, 0, 0, 114, 9, 1, 0, 0, 0, 115, 120, 3, 12, 6, 0, 116, 120, 
+	3, 40, 20, 0, 117, 120, 3, 14, 7, 0, 118, 120, 3, 16, 8, 0, 119, 115, 1, 
+	0, 0, 0, 119, 116, 1, 0, 0, 0, 119, 117, 1, 0, 0, 0, 119, 118, 1, 0, 0, 
+	0, 120, 123, 1, 0, 0, 0, 121, 119, 1, 0, 0, 0, 121, 122, 1, 0, 0, 0, 122, 
+	11, 1, 0, 0, 0, 123, 121, 1, 0, 0, 0, 124, 127, 3, 22, 11, 0, 125, 127, 
+	3, 24, 12, 0, 126, 124, 1, 0, 0, 0, 126, 125, 1, 0, 0, 0, 127, 128, 1, 
+	0, 0, 0, 128, 126, 1, 0, 0, 0, 128, 129, 1, 0, 0, 0, 129, 131, 1, 0, 0, 
+	0, 130, 132, 5, 22, 0, 0, 131, 130, 1, 0, 0, 0, 131, 132, 1, 0, 0, 0, 132, 
+	13, 1, 0, 0, 0, 133, 137, 5, 2, 0, 0, 134, 136, 5, 23, 0, 0, 135, 134, 
+	1, 0, 0, 0, 136, 139, 1, 0, 0, 0, 137, 135, 1, 0, 0, 0, 137, 138, 1, 0, 
+	0, 0, 138, 15, 1, 0, 0, 0, 139, 137, 1, 0, 0, 0, 140, 142, 5, 22, 0, 0, 
+	141, 140, 1, 0, 0, 0, 142, 143, 1, 0, 0, 0, 143, 141, 1, 0, 0, 0, 143, 
+	144, 1, 0, 0, 0, 144, 17, 1, 0, 0, 0, 145, 147, 5, 18, 0, 0, 146, 145, 
+	1, 0, 0, 0, 147, 148, 1, 0, 0, 0, 148, 146, 1, 0, 0, 0, 148, 149, 1, 0, 
+	0, 0, 149, 153, 1, 0, 0, 0, 150, 152, 5, 23, 0, 0, 151, 150, 1, 0, 0, 0, 
+	152, 155, 1, 0, 0, 0, 153, 151, 1, 0, 0, 0, 153, 154, 1, 0, 0, 0, 154, 
+	164, 1, 0, 0, 0, 155, 153, 1, 0, 0, 0, 156, 160, 7, 0, 0, 0, 157, 159, 
+	5, 23, 0, 0, 158, 157, 1, 0, 0, 0, 159, 162, 1, 0, 0, 0, 160, 158, 1, 0, 
+	0, 0, 160, 161, 1, 0, 0, 0, 161, 164, 1, 0, 0, 0, 162, 160, 1, 0, 0, 0, 
+	163, 146, 1, 0, 0, 0, 163, 156, 1, 0, 0, 0, 164, 19, 1, 0, 0, 0, 165, 166, 
+	5, 8, 0, 0, 166, 21, 1, 0, 0, 0, 167, 169, 5, 9, 0, 0, 168, 170, 3, 26, 
+	13, 0, 169, 168, 1, 0, 0, 0, 170, 171, 1, 0, 0, 0, 171, 169, 1, 0, 0, 0, 
+	171, 172, 1, 0, 0, 0, 172, 173, 1, 0, 0, 0, 173, 174, 5, 4, 0, 0, 174, 
+	210, 1, 0, 0, 0, 175, 177, 5, 10, 0, 0, 176, 178, 5, 18, 0, 0, 177, 176, 
+	1, 0, 0, 0, 178, 179, 1, 0, 0, 0, 179, 177, 1, 0, 0, 0, 179, 180, 1, 0, 
+	0, 0, 180, 181, 1, 0, 0, 0, 181, 183, 5, 7, 0, 0, 182, 184, 3, 24, 12, 
+	0, 183, 182, 1, 0, 0, 0, 184, 185, 1, 0, 0, 0, 185, 183, 1, 0, 0, 0, 185, 
+	186, 1, 0, 0, 0, 186, 187, 1, 0, 0, 0, 187, 188, 5, 4, 0, 0, 188, 210, 
+	1, 0, 0, 0, 189, 191, 5, 10, 0, 0, 190, 192, 5, 18, 0, 0, 191, 190, 1, 
+	0, 0, 0, 192, 193, 1, 0, 0, 0, 193, 191, 1, 0, 0, 0, 193, 194, 1, 0, 0, 
+	0, 194, 195, 1, 0, 0, 0, 195, 197, 5, 7, 0, 0, 196, 198, 3, 24, 12, 0, 
+	197, 196, 1, 0, 0, 0, 198, 199, 1, 0, 0, 0, 199, 197, 1, 0, 0, 0, 199, 
+	200, 1, 0, 0, 0, 200, 201, 1, 0, 0, 0, 201, 203, 3, 20, 10, 0, 202, 204, 
+	3, 24, 12, 0, 203, 202, 1, 0, 0, 0, 204, 205, 1, 0, 0, 0, 205, 203, 1, 
+	0, 0, 0, 205, 206, 1, 0, 0, 0, 206, 207, 1, 0, 0, 0, 207, 208, 5, 4, 0, 
+	0, 208, 210, 1, 0, 0, 0, 209, 167, 1, 0, 0, 0, 209, 175, 1, 0, 0, 0, 209, 
+	189, 1, 0, 0, 0, 210, 23, 1, 0, 0, 0, 211, 213, 5, 10, 0, 0, 212, 214, 
+	3, 18, 9, 0, 213, 212, 1, 0, 0, 0, 213, 214, 1, 0, 0, 0, 214, 220, 1, 0, 
+	0, 0, 215, 220, 5, 18, 0, 0, 216, 220, 7, 1, 0, 0, 217, 220, 5, 21, 0, 
+	0, 218, 220, 5, 23, 0, 0, 219, 211, 1, 0, 0, 0, 219, 215, 1, 0, 0, 0, 219, 
+	216, 1, 0, 0, 0, 219, 217, 1, 0, 0, 0, 219, 218, 1, 0, 0, 0, 220, 25, 1, 
+	0, 0, 0, 221, 226, 3, 24, 12, 0, 222, 226, 5, 20, 0, 0, 223, 226, 5, 19, 
+	0, 0, 224, 226, 3, 14, 7, 0, 225, 221, 1, 0, 0, 0, 225, 222, 1, 0, 0, 0, 
+	225, 223, 1, 0, 0, 0, 225, 224, 1, 0, 0, 0, 226, 27, 1, 0, 0, 0, 227, 228, 
+	7, 2, 0, 0, 228, 29, 1, 0, 0, 0, 229, 232, 3, 26, 13, 0, 230, 232, 3, 28, 
+	14, 0, 231, 229, 1, 0, 0, 0, 231, 230, 1, 0, 0, 0, 232, 31, 1, 0, 0, 0, 
+	233, 235, 3, 30, 15, 0, 234, 233, 1, 0, 0, 0, 235, 238, 1, 0, 0, 0, 236, 
+	234, 1, 0, 0, 0, 236, 237, 1, 0, 0, 0, 237, 239, 1, 0, 0, 0, 238, 236, 
+	1, 0, 0, 0, 239, 240, 5, 22, 0, 0, 240, 33, 1, 0, 0, 0, 241, 245, 3, 22, 
+	11, 0, 242, 245, 3, 24, 12, 0, 243, 245, 3, 28, 14, 0, 244, 241, 1, 0, 
+	0, 0, 244, 242, 1, 0, 0, 0, 244, 243, 1, 0, 0, 0, 245, 35, 1, 0, 0, 0, 
+	246, 248, 3, 34, 17, 0, 247, 246, 1, 0, 0, 0, 248, 249, 1, 0, 0, 0, 249, 
+	247, 1, 0, 0, 0, 249, 250, 1, 0, 0, 0, 250, 252, 1, 0, 0, 0, 251, 253, 
+	5, 22, 0, 0, 252, 251, 1, 0, 0, 0, 253, 254, 1, 0, 0, 0, 254, 252, 1, 0, 
+	0, 0, 254, 255, 1, 0, 0, 0, 255, 37, 1, 0, 0, 0, 256, 258, 5, 23, 0, 0, 
+	257, 256, 1, 0, 0, 0, 258, 261, 1, 0, 0, 0, 259, 257, 1, 0, 0, 0, 259, 
+	260, 1, 0, 0, 0, 260, 262, 1, 0, 0, 0, 261, 259, 1, 0, 0, 0, 262, 266, 
+	5, 11, 0, 0, 263, 265, 5, 23, 0, 0, 264, 263, 1, 0, 0, 0, 265, 268, 1, 
+	0, 0, 0, 266, 264, 1, 0, 0, 0, 266, 267, 1, 0, 0, 0, 267, 269, 1, 0, 0, 
+	0, 268, 266, 1, 0, 0, 0, 269, 270, 3, 36, 18, 0, 270, 39, 1, 0, 0, 0, 271, 
+	275, 5, 12, 0, 0, 272, 274, 5, 22, 0, 0, 273, 272, 1, 0, 0, 0, 274, 277, 
+	1, 0, 0, 0, 275, 273, 1, 0, 0, 0, 275, 276, 1, 0, 0, 0, 276, 281, 1, 0, 
+	0, 0, 277, 275, 1, 0, 0, 0, 278, 280, 3, 38, 19, 0, 279, 278, 1, 0, 0, 
+	0, 280, 283, 1, 0, 0, 0, 281, 279, 1, 0, 0, 0, 281, 282, 1, 0, 0, 0, 282, 
+	284, 1, 0, 0, 0, 283, 281, 1, 0, 0, 0, 284, 286, 5, 13, 0, 0, 285, 287, 
+	5, 22, 0, 0, 286, 285, 1, 0, 0, 0, 286, 287, 1, 0, 0, 0, 287, 320, 1, 0, 
+	0, 0, 288, 292, 5, 14, 0, 0, 289, 291, 5, 22, 0, 0, 290, 289, 1, 0, 0, 
+	0, 291, 294, 1, 0, 0, 0, 292, 290, 1, 0, 0, 0, 292, 293, 1, 0, 0, 0, 293, 
+	298, 1, 0, 0, 0, 294, 292, 1, 0, 0, 0, 295, 297, 3, 38, 19, 0, 296, 295, 
+	1, 0, 0, 0, 297, 300, 1, 0, 0, 0, 298, 296, 1, 0, 0, 0, 298, 299, 1, 0, 
+	0, 0, 299, 301, 1, 0, 0, 0, 300, 298, 1, 0, 0, 0, 301, 303, 5, 15, 0, 0, 
+	302, 304, 5, 22, 0, 0, 303, 302, 1, 0, 0, 0, 303, 304, 1, 0, 0, 0, 304, 
+	320, 1, 0, 0, 0, 305, 307, 5, 16, 0, 0, 306, 308, 5, 22, 0, 0, 307, 306, 
+	1, 0, 0, 0, 307, 308, 1, 0, 0, 0, 308, 312, 1, 0, 0, 0, 309, 311, 3, 32, 
+	16, 0, 310, 309, 1, 0, 0, 0, 311, 314, 1, 0, 0, 0, 312, 310, 1, 0, 0, 0, 
+	312, 313, 1, 0, 0, 0, 313, 315, 1, 0, 0, 0, 314, 312, 1, 0, 0, 0, 315, 
+	317, 5, 17, 0, 0, 316, 318, 5, 22, 0, 0, 317, 316, 1, 0, 0, 0, 317, 318, 
+	1, 0, 0, 0, 318, 320, 1, 0, 0, 0, 319, 271, 1, 0, 0, 0, 319, 288, 1, 0, 
+	0, 0, 319, 305, 1, 0, 0, 0, 320, 41, 1, 0, 0, 0, 50, 50, 60, 66, 70, 76, 
+	81, 87, 93, 97, 103, 109, 113, 119, 121, 126, 128, 131, 137, 143, 148, 
+	153, 160, 163, 171, 179, 185, 193, 199, 205, 209, 213, 219, 225, 231, 236, 
+	244, 249, 254, 259, 266, 275, 281, 286, 292, 298, 303, 307, 312, 317, 319,
 }
   deserializer := antlr.NewATNDeserializer(nil)
   staticData.atn = deserializer.Deserialize(staticData.serializedATN)
@@ -236,13 +256,16 @@ const (
 	LatexParserT__13 = 14
 	LatexParserT__14 = 15
 	LatexParserT__15 = 16
-	LatexParserLETTER = 17
-	LatexParserPUNCTUATION = 18
-	LatexParserSYMBOL = 19
-	LatexParserNUMBER = 20
-	LatexParserNEWLINE = 21
-	LatexParserWS = 22
-	LatexParserCR = 23
+	LatexParserT__16 = 17
+	LatexParserLETTER = 18
+	LatexParserSPECIAL = 19
+	LatexParserSYMBOL = 20
+	LatexParserNUMBER = 21
+	LatexParserNEWLINE = 22
+	LatexParserWS = 23
+	LatexParserCR = 24
+	LatexParserPUNCTUATION = 25
+	LatexParserEXTENDED_UNICODE = 26
 )
 
 // LatexParser rules.
@@ -261,10 +284,13 @@ const (
 	LatexParserRULE_tag = 11
 	LatexParserRULE_word = 12
 	LatexParserRULE_verbatim_content = 13
-	LatexParserRULE_verbatim_line = 14
-	LatexParserRULE_block_line = 15
-	LatexParserRULE_block_item = 16
-	LatexParserRULE_block = 17
+	LatexParserRULE_curly_parens = 14
+	LatexParserRULE_verbatim_block_content = 15
+	LatexParserRULE_verbatim_line = 16
+	LatexParserRULE_block_content = 17
+	LatexParserRULE_block_line = 18
+	LatexParserRULE_block_item = 19
+	LatexParserRULE_block = 20
 )
 
 // ILatexContext is an interface to support dynamic dispatch.
@@ -460,26 +486,26 @@ func (p *LatexParser) Latex() (localctx ILatexContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(36)
+		p.SetState(42)
 		p.Note_title()
 	}
 	{
-		p.SetState(37)
+		p.SetState(43)
 		p.Note_url()
 	}
 	{
-		p.SetState(38)
+		p.SetState(44)
 		p.Note_created()
 	}
 	{
-		p.SetState(39)
+		p.SetState(45)
 		p.Note_updated()
 	}
 	{
-		p.SetState(40)
+		p.SetState(46)
 		p.Line_break()
 	}
-	p.SetState(44)
+	p.SetState(50)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {
 		goto errorExit
@@ -491,7 +517,7 @@ func (p *LatexParser) Latex() (localctx ILatexContext) {
 	for _alt != 2 && _alt != antlr.ATNInvalidAltNumber {
 		if _alt == 1 {
 			{
-				p.SetState(41)
+				p.SetState(47)
 				p.Match(LatexParserNEWLINE)
 				if p.HasError() {
 						// Recognition error - abort rule
@@ -501,7 +527,7 @@ func (p *LatexParser) Latex() (localctx ILatexContext) {
 
 
 		}
-		p.SetState(46)
+		p.SetState(52)
 		p.GetErrorHandler().Sync(p)
 		if p.HasError() {
 	    	goto errorExit
@@ -512,11 +538,11 @@ func (p *LatexParser) Latex() (localctx ILatexContext) {
 		}
 	}
 	{
-		p.SetState(47)
+		p.SetState(53)
 		p.Note_text()
 	}
 	{
-		p.SetState(48)
+		p.SetState(54)
 		p.Match(LatexParserEOF)
 		if p.HasError() {
 				// Recognition error - abort rule
@@ -676,14 +702,14 @@ func (p *LatexParser) Note_title() (localctx INote_titleContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(50)
+		p.SetState(56)
 		p.Match(LatexParserT__0)
 		if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
 		}
 	}
-	p.SetState(54)
+	p.SetState(60)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {
 		goto errorExit
@@ -695,7 +721,7 @@ func (p *LatexParser) Note_title() (localctx INote_titleContext) {
 	for _alt != 2 && _alt != antlr.ATNInvalidAltNumber {
 		if _alt == 1 {
 			{
-				p.SetState(51)
+				p.SetState(57)
 				p.Match(LatexParserWS)
 				if p.HasError() {
 						// Recognition error - abort rule
@@ -705,7 +731,7 @@ func (p *LatexParser) Note_title() (localctx INote_titleContext) {
 
 
 		}
-		p.SetState(56)
+		p.SetState(62)
 		p.GetErrorHandler().Sync(p)
 		if p.HasError() {
 	    	goto errorExit
@@ -713,36 +739,6 @@ func (p *LatexParser) Note_title() (localctx INote_titleContext) {
 		_alt = p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 1, p.GetParserRuleContext())
 		if p.HasError() {
 			goto errorExit
-		}
-	}
-	p.SetState(58)
-	p.GetErrorHandler().Sync(p)
-	if p.HasError() {
-		goto errorExit
-	}
-	_la = p.GetTokenStream().LA(1)
-
-
-	for ok := true; ok; ok = ((int64(_la) & ^0x3f) == 0 && ((int64(1) << _la) & 5636224) != 0) {
-		{
-			p.SetState(57)
-			p.Word()
-		}
-
-
-		p.SetState(60)
-		p.GetErrorHandler().Sync(p)
-		if p.HasError() {
-	    	goto errorExit
-	    }
-		_la = p.GetTokenStream().LA(1)
-	}
-	{
-		p.SetState(62)
-		p.Match(LatexParserT__1)
-		if p.HasError() {
-				// Recognition error - abort rule
-				goto errorExit
 		}
 	}
 	p.SetState(64)
@@ -753,9 +749,39 @@ func (p *LatexParser) Note_title() (localctx INote_titleContext) {
 	_la = p.GetTokenStream().LA(1)
 
 
-	if _la == LatexParserNEWLINE {
+	for ok := true; ok; ok = ((int64(_la) & ^0x3f) == 0 && ((int64(1) << _la) & 111412224) != 0) {
 		{
 			p.SetState(63)
+			p.Word()
+		}
+
+
+		p.SetState(66)
+		p.GetErrorHandler().Sync(p)
+		if p.HasError() {
+	    	goto errorExit
+	    }
+		_la = p.GetTokenStream().LA(1)
+	}
+	{
+		p.SetState(68)
+		p.Match(LatexParserT__1)
+		if p.HasError() {
+				// Recognition error - abort rule
+				goto errorExit
+		}
+	}
+	p.SetState(70)
+	p.GetErrorHandler().Sync(p)
+	if p.HasError() {
+		goto errorExit
+	}
+	_la = p.GetTokenStream().LA(1)
+
+
+	if _la == LatexParserNEWLINE {
+		{
+			p.SetState(69)
 			p.Match(LatexParserNEWLINE)
 			if p.HasError() {
 					// Recognition error - abort rule
@@ -789,8 +815,8 @@ type INote_urlContext interface {
 	GetParser() antlr.Parser
 
 	// Getter signatures
-	AllWord() []IWordContext
-	Word(i int) IWordContext
+	AllVerbatim_content() []IVerbatim_contentContext
+	Verbatim_content(i int) IVerbatim_contentContext
 	NEWLINE() antlr.TerminalNode
 
 	// IsNote_urlContext differentiates from other interfaces.
@@ -829,20 +855,20 @@ func NewNote_urlContext(parser antlr.Parser, parent antlr.ParserRuleContext, inv
 
 func (s *Note_urlContext) GetParser() antlr.Parser { return s.parser }
 
-func (s *Note_urlContext) AllWord() []IWordContext {
+func (s *Note_urlContext) AllVerbatim_content() []IVerbatim_contentContext {
 	children := s.GetChildren()
 	len := 0
 	for _, ctx := range children {
-		if _, ok := ctx.(IWordContext); ok {
+		if _, ok := ctx.(IVerbatim_contentContext); ok {
 			len++
 		}
 	}
 
-	tst := make([]IWordContext, len)
+	tst := make([]IVerbatim_contentContext, len)
 	i := 0
 	for _, ctx := range children {
-		if t, ok := ctx.(IWordContext); ok {
-			tst[i] = t.(IWordContext)
+		if t, ok := ctx.(IVerbatim_contentContext); ok {
+			tst[i] = t.(IVerbatim_contentContext)
 			i++
 		}
 	}
@@ -850,11 +876,11 @@ func (s *Note_urlContext) AllWord() []IWordContext {
 	return tst
 }
 
-func (s *Note_urlContext) Word(i int) IWordContext {
+func (s *Note_urlContext) Verbatim_content(i int) IVerbatim_contentContext {
 	var t antlr.RuleContext;
 	j := 0
 	for _, ctx := range s.GetChildren() {
-		if _, ok := ctx.(IWordContext); ok {
+		if _, ok := ctx.(IVerbatim_contentContext); ok {
 			if j == i {
 				t = ctx.(antlr.RuleContext);
 				break
@@ -867,7 +893,7 @@ func (s *Note_urlContext) Word(i int) IWordContext {
 		return nil
 	}
 
-	return t.(IWordContext)
+	return t.(IVerbatim_contentContext)
 }
 
 func (s *Note_urlContext) NEWLINE() antlr.TerminalNode {
@@ -905,14 +931,14 @@ func (p *LatexParser) Note_url() (localctx INote_urlContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(66)
+		p.SetState(72)
 		p.Match(LatexParserT__2)
 		if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
 		}
 	}
-	p.SetState(68)
+	p.SetState(74)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {
 		goto errorExit
@@ -920,14 +946,14 @@ func (p *LatexParser) Note_url() (localctx INote_urlContext) {
 	_la = p.GetTokenStream().LA(1)
 
 
-	for ok := true; ok; ok = ((int64(_la) & ^0x3f) == 0 && ((int64(1) << _la) & 5636224) != 0) {
+	for ok := true; ok; ok = ((int64(_la) & ^0x3f) == 0 && ((int64(1) << _la) & 112985092) != 0) {
 		{
-			p.SetState(67)
-			p.Word()
+			p.SetState(73)
+			p.Verbatim_content()
 		}
 
 
-		p.SetState(70)
+		p.SetState(76)
 		p.GetErrorHandler().Sync(p)
 		if p.HasError() {
 	    	goto errorExit
@@ -935,7 +961,7 @@ func (p *LatexParser) Note_url() (localctx INote_urlContext) {
 		_la = p.GetTokenStream().LA(1)
 	}
 	{
-		p.SetState(72)
+		p.SetState(78)
 		p.Match(LatexParserT__3)
 		if p.HasError() {
 				// Recognition error - abort rule
@@ -943,14 +969,14 @@ func (p *LatexParser) Note_url() (localctx INote_urlContext) {
 		}
 	}
 	{
-		p.SetState(73)
+		p.SetState(79)
 		p.Match(LatexParserT__1)
 		if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
 		}
 	}
-	p.SetState(75)
+	p.SetState(81)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {
 		goto errorExit
@@ -960,7 +986,7 @@ func (p *LatexParser) Note_url() (localctx INote_urlContext) {
 
 	if _la == LatexParserNEWLINE {
 		{
-			p.SetState(74)
+			p.SetState(80)
 			p.Match(LatexParserNEWLINE)
 			if p.HasError() {
 					// Recognition error - abort rule
@@ -1122,14 +1148,14 @@ func (p *LatexParser) Note_created() (localctx INote_createdContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(77)
+		p.SetState(83)
 		p.Match(LatexParserT__4)
 		if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
 		}
 	}
-	p.SetState(81)
+	p.SetState(87)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {
 		goto errorExit
@@ -1141,7 +1167,7 @@ func (p *LatexParser) Note_created() (localctx INote_createdContext) {
 	for _alt != 2 && _alt != antlr.ATNInvalidAltNumber {
 		if _alt == 1 {
 			{
-				p.SetState(78)
+				p.SetState(84)
 				p.Match(LatexParserWS)
 				if p.HasError() {
 						// Recognition error - abort rule
@@ -1151,7 +1177,7 @@ func (p *LatexParser) Note_created() (localctx INote_createdContext) {
 
 
 		}
-		p.SetState(83)
+		p.SetState(89)
 		p.GetErrorHandler().Sync(p)
 		if p.HasError() {
 	    	goto errorExit
@@ -1159,36 +1185,6 @@ func (p *LatexParser) Note_created() (localctx INote_createdContext) {
 		_alt = p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 6, p.GetParserRuleContext())
 		if p.HasError() {
 			goto errorExit
-		}
-	}
-	p.SetState(85)
-	p.GetErrorHandler().Sync(p)
-	if p.HasError() {
-		goto errorExit
-	}
-	_la = p.GetTokenStream().LA(1)
-
-
-	for ok := true; ok; ok = ((int64(_la) & ^0x3f) == 0 && ((int64(1) << _la) & 5636224) != 0) {
-		{
-			p.SetState(84)
-			p.Word()
-		}
-
-
-		p.SetState(87)
-		p.GetErrorHandler().Sync(p)
-		if p.HasError() {
-	    	goto errorExit
-	    }
-		_la = p.GetTokenStream().LA(1)
-	}
-	{
-		p.SetState(89)
-		p.Match(LatexParserT__1)
-		if p.HasError() {
-				// Recognition error - abort rule
-				goto errorExit
 		}
 	}
 	p.SetState(91)
@@ -1199,9 +1195,39 @@ func (p *LatexParser) Note_created() (localctx INote_createdContext) {
 	_la = p.GetTokenStream().LA(1)
 
 
-	if _la == LatexParserNEWLINE {
+	for ok := true; ok; ok = ((int64(_la) & ^0x3f) == 0 && ((int64(1) << _la) & 111412224) != 0) {
 		{
 			p.SetState(90)
+			p.Word()
+		}
+
+
+		p.SetState(93)
+		p.GetErrorHandler().Sync(p)
+		if p.HasError() {
+	    	goto errorExit
+	    }
+		_la = p.GetTokenStream().LA(1)
+	}
+	{
+		p.SetState(95)
+		p.Match(LatexParserT__1)
+		if p.HasError() {
+				// Recognition error - abort rule
+				goto errorExit
+		}
+	}
+	p.SetState(97)
+	p.GetErrorHandler().Sync(p)
+	if p.HasError() {
+		goto errorExit
+	}
+	_la = p.GetTokenStream().LA(1)
+
+
+	if _la == LatexParserNEWLINE {
+		{
+			p.SetState(96)
 			p.Match(LatexParserNEWLINE)
 			if p.HasError() {
 					// Recognition error - abort rule
@@ -1363,14 +1389,14 @@ func (p *LatexParser) Note_updated() (localctx INote_updatedContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(93)
+		p.SetState(99)
 		p.Match(LatexParserT__5)
 		if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
 		}
 	}
-	p.SetState(97)
+	p.SetState(103)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {
 		goto errorExit
@@ -1382,7 +1408,7 @@ func (p *LatexParser) Note_updated() (localctx INote_updatedContext) {
 	for _alt != 2 && _alt != antlr.ATNInvalidAltNumber {
 		if _alt == 1 {
 			{
-				p.SetState(94)
+				p.SetState(100)
 				p.Match(LatexParserWS)
 				if p.HasError() {
 						// Recognition error - abort rule
@@ -1392,7 +1418,7 @@ func (p *LatexParser) Note_updated() (localctx INote_updatedContext) {
 
 
 		}
-		p.SetState(99)
+		p.SetState(105)
 		p.GetErrorHandler().Sync(p)
 		if p.HasError() {
 	    	goto errorExit
@@ -1400,36 +1426,6 @@ func (p *LatexParser) Note_updated() (localctx INote_updatedContext) {
 		_alt = p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 9, p.GetParserRuleContext())
 		if p.HasError() {
 			goto errorExit
-		}
-	}
-	p.SetState(101)
-	p.GetErrorHandler().Sync(p)
-	if p.HasError() {
-		goto errorExit
-	}
-	_la = p.GetTokenStream().LA(1)
-
-
-	for ok := true; ok; ok = ((int64(_la) & ^0x3f) == 0 && ((int64(1) << _la) & 5636224) != 0) {
-		{
-			p.SetState(100)
-			p.Word()
-		}
-
-
-		p.SetState(103)
-		p.GetErrorHandler().Sync(p)
-		if p.HasError() {
-	    	goto errorExit
-	    }
-		_la = p.GetTokenStream().LA(1)
-	}
-	{
-		p.SetState(105)
-		p.Match(LatexParserT__1)
-		if p.HasError() {
-				// Recognition error - abort rule
-				goto errorExit
 		}
 	}
 	p.SetState(107)
@@ -1440,9 +1436,39 @@ func (p *LatexParser) Note_updated() (localctx INote_updatedContext) {
 	_la = p.GetTokenStream().LA(1)
 
 
-	if _la == LatexParserNEWLINE {
+	for ok := true; ok; ok = ((int64(_la) & ^0x3f) == 0 && ((int64(1) << _la) & 111412224) != 0) {
 		{
 			p.SetState(106)
+			p.Word()
+		}
+
+
+		p.SetState(109)
+		p.GetErrorHandler().Sync(p)
+		if p.HasError() {
+	    	goto errorExit
+	    }
+		_la = p.GetTokenStream().LA(1)
+	}
+	{
+		p.SetState(111)
+		p.Match(LatexParserT__1)
+		if p.HasError() {
+				// Recognition error - abort rule
+				goto errorExit
+		}
+	}
+	p.SetState(113)
+	p.GetErrorHandler().Sync(p)
+	if p.HasError() {
+		goto errorExit
+	}
+	_la = p.GetTokenStream().LA(1)
+
+
+	if _la == LatexParserNEWLINE {
+		{
+			p.SetState(112)
 			p.Match(LatexParserNEWLINE)
 			if p.HasError() {
 					// Recognition error - abort rule
@@ -1715,7 +1741,7 @@ func (p *LatexParser) Note_text() (localctx INote_textContext) {
 	var _la int
 
 	p.EnterOuterAlt(localctx, 1)
-	p.SetState(115)
+	p.SetState(121)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {
 		goto errorExit
@@ -1723,38 +1749,38 @@ func (p *LatexParser) Note_text() (localctx INote_textContext) {
 	_la = p.GetTokenStream().LA(1)
 
 
-	for ((int64(_la) & ^0x3f) == 0 && ((int64(1) << _la) & 7776388) != 0) {
-		p.SetState(113)
+	for ((int64(_la) & ^0x3f) == 0 && ((int64(1) << _la) & 115693060) != 0) {
+		p.SetState(119)
 		p.GetErrorHandler().Sync(p)
 		if p.HasError() {
 			goto errorExit
 		}
 
 		switch p.GetTokenStream().LA(1) {
-		case LatexParserT__6, LatexParserLETTER, LatexParserPUNCTUATION, LatexParserNUMBER, LatexParserWS:
+		case LatexParserT__8, LatexParserT__9, LatexParserLETTER, LatexParserNUMBER, LatexParserWS, LatexParserPUNCTUATION, LatexParserEXTENDED_UNICODE:
 			{
-				p.SetState(109)
+				p.SetState(115)
 				p.Text()
 			}
 
 
-		case LatexParserT__10, LatexParserT__12, LatexParserT__14:
+		case LatexParserT__11, LatexParserT__13, LatexParserT__15:
 			{
-				p.SetState(110)
+				p.SetState(116)
 				p.Block()
 			}
 
 
 		case LatexParserT__1:
 			{
-				p.SetState(111)
+				p.SetState(117)
 				p.Line_break()
 			}
 
 
 		case LatexParserNEWLINE:
 			{
-				p.SetState(112)
+				p.SetState(118)
 				p.Empty_line()
 			}
 
@@ -1765,7 +1791,7 @@ func (p *LatexParser) Note_text() (localctx INote_textContext) {
 			goto errorExit
 		}
 
-		p.SetState(117)
+		p.SetState(123)
 		p.GetErrorHandler().Sync(p)
 		if p.HasError() {
 	    	goto errorExit
@@ -1955,7 +1981,7 @@ func (p *LatexParser) Text() (localctx ITextContext) {
 	var _alt int
 
 	p.EnterOuterAlt(localctx, 1)
-	p.SetState(120)
+	p.SetState(126)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {
 		goto errorExit
@@ -1964,7 +1990,7 @@ func (p *LatexParser) Text() (localctx ITextContext) {
 	for ok := true; ok; ok = _alt != 2 && _alt != antlr.ATNInvalidAltNumber {
 		switch _alt {
 		case 1:
-				p.SetState(120)
+				p.SetState(126)
 				p.GetErrorHandler().Sync(p)
 				if p.HasError() {
 					goto errorExit
@@ -1973,14 +1999,14 @@ func (p *LatexParser) Text() (localctx ITextContext) {
 				switch p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 14, p.GetParserRuleContext()) {
 				case 1:
 					{
-						p.SetState(118)
+						p.SetState(124)
 						p.Tag()
 					}
 
 
 				case 2:
 					{
-						p.SetState(119)
+						p.SetState(125)
 						p.Word()
 					}
 
@@ -1995,20 +2021,20 @@ func (p *LatexParser) Text() (localctx ITextContext) {
 			goto errorExit
 		}
 
-		p.SetState(122)
+		p.SetState(128)
 		p.GetErrorHandler().Sync(p)
 		_alt = p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 15, p.GetParserRuleContext())
 		if p.HasError() {
 			goto errorExit
 		}
 	}
-	p.SetState(125)
+	p.SetState(131)
 	p.GetErrorHandler().Sync(p)
 
 
 	if p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 16, p.GetParserRuleContext()) == 1 {
 		{
-			p.SetState(124)
+			p.SetState(130)
 			p.Match(LatexParserNEWLINE)
 			if p.HasError() {
 					// Recognition error - abort rule
@@ -2122,14 +2148,14 @@ func (p *LatexParser) Line_break() (localctx ILine_breakContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(127)
+		p.SetState(133)
 		p.Match(LatexParserT__1)
 		if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
 		}
 	}
-	p.SetState(131)
+	p.SetState(137)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {
 		goto errorExit
@@ -2141,7 +2167,7 @@ func (p *LatexParser) Line_break() (localctx ILine_breakContext) {
 	for _alt != 2 && _alt != antlr.ATNInvalidAltNumber {
 		if _alt == 1 {
 			{
-				p.SetState(128)
+				p.SetState(134)
 				p.Match(LatexParserWS)
 				if p.HasError() {
 						// Recognition error - abort rule
@@ -2151,7 +2177,7 @@ func (p *LatexParser) Line_break() (localctx ILine_breakContext) {
 
 
 		}
-		p.SetState(133)
+		p.SetState(139)
 		p.GetErrorHandler().Sync(p)
 		if p.HasError() {
 	    	goto errorExit
@@ -2263,7 +2289,7 @@ func (p *LatexParser) Empty_line() (localctx IEmpty_lineContext) {
 	var _alt int
 
 	p.EnterOuterAlt(localctx, 1)
-	p.SetState(135)
+	p.SetState(141)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {
 		goto errorExit
@@ -2273,7 +2299,7 @@ func (p *LatexParser) Empty_line() (localctx IEmpty_lineContext) {
 		switch _alt {
 		case 1:
 				{
-					p.SetState(134)
+					p.SetState(140)
 					p.Match(LatexParserNEWLINE)
 					if p.HasError() {
 							// Recognition error - abort rule
@@ -2289,7 +2315,7 @@ func (p *LatexParser) Empty_line() (localctx IEmpty_lineContext) {
 			goto errorExit
 		}
 
-		p.SetState(137)
+		p.SetState(143)
 		p.GetErrorHandler().Sync(p)
 		_alt = p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 18, p.GetParserRuleContext())
 		if p.HasError() {
@@ -2335,13 +2361,11 @@ type IEscaped_wordContext interface {
 
 
 	// Getter signatures
-	NEWLINE() antlr.TerminalNode
-	AllWS() []antlr.TerminalNode
-	WS(i int) antlr.TerminalNode
 	AllLETTER() []antlr.TerminalNode
 	LETTER(i int) antlr.TerminalNode
-	AllSYMBOL() []antlr.TerminalNode
-	SYMBOL(i int) antlr.TerminalNode
+	AllWS() []antlr.TerminalNode
+	WS(i int) antlr.TerminalNode
+	SYMBOL() antlr.TerminalNode
 
 	// IsEscaped_wordContext differentiates from other interfaces.
 	IsEscaped_wordContext()
@@ -2391,8 +2415,12 @@ func (s *Escaped_wordContext) SetContent(v antlr.Token) { s.content = v }
 func (s *Escaped_wordContext) SetSpace(v antlr.Token) { s.space = v }
 
 
-func (s *Escaped_wordContext) NEWLINE() antlr.TerminalNode {
-	return s.GetToken(LatexParserNEWLINE, 0)
+func (s *Escaped_wordContext) AllLETTER() []antlr.TerminalNode {
+	return s.GetTokens(LatexParserLETTER)
+}
+
+func (s *Escaped_wordContext) LETTER(i int) antlr.TerminalNode {
+	return s.GetToken(LatexParserLETTER, i)
 }
 
 func (s *Escaped_wordContext) AllWS() []antlr.TerminalNode {
@@ -2403,20 +2431,8 @@ func (s *Escaped_wordContext) WS(i int) antlr.TerminalNode {
 	return s.GetToken(LatexParserWS, i)
 }
 
-func (s *Escaped_wordContext) AllLETTER() []antlr.TerminalNode {
-	return s.GetTokens(LatexParserLETTER)
-}
-
-func (s *Escaped_wordContext) LETTER(i int) antlr.TerminalNode {
-	return s.GetToken(LatexParserLETTER, i)
-}
-
-func (s *Escaped_wordContext) AllSYMBOL() []antlr.TerminalNode {
-	return s.GetTokens(LatexParserSYMBOL)
-}
-
-func (s *Escaped_wordContext) SYMBOL(i int) antlr.TerminalNode {
-	return s.GetToken(LatexParserSYMBOL, i)
+func (s *Escaped_wordContext) SYMBOL() antlr.TerminalNode {
+	return s.GetToken(LatexParserSYMBOL, 0)
 }
 
 func (s *Escaped_wordContext) GetRuleContext() antlr.RuleContext {
@@ -2450,111 +2466,150 @@ func (p *LatexParser) Escaped_word() (localctx IEscaped_wordContext) {
 
 	var _alt int
 
-	p.EnterOuterAlt(localctx, 1)
-	{
-		p.SetState(139)
-		p.Match(LatexParserT__6)
-		if p.HasError() {
-				// Recognition error - abort rule
-				goto errorExit
-		}
-	}
-	p.SetState(141)
+	p.SetState(163)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {
 		goto errorExit
 	}
-	_alt = 1
-	for ok := true; ok; ok = _alt != 2 && _alt != antlr.ATNInvalidAltNumber {
-		switch _alt {
-		case 1:
-				{
-					p.SetState(140)
 
-					var _lt = p.GetTokenStream().LT(1)
-
-					localctx.(*Escaped_wordContext).content = _lt
-
-					_la = p.GetTokenStream().LA(1)
-
-					if !(_la == LatexParserLETTER || _la == LatexParserSYMBOL) {
-						var _ri = p.GetErrorHandler().RecoverInline(p)
-
-						localctx.(*Escaped_wordContext).content = _ri
-					} else {
-						p.GetErrorHandler().ReportMatch(p)
-						p.Consume()
-					}
-				}
-
-
-
-
-		default:
-			p.SetError(antlr.NewNoViableAltException(p, nil, nil, nil, nil, nil))
-			goto errorExit
-		}
-
-		p.SetState(143)
+	switch p.GetTokenStream().LA(1) {
+	case LatexParserLETTER:
+		p.EnterOuterAlt(localctx, 1)
+		p.SetState(146)
 		p.GetErrorHandler().Sync(p)
-		_alt = p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 19, p.GetParserRuleContext())
 		if p.HasError() {
 			goto errorExit
 		}
-	}
-	p.SetState(148)
-	p.GetErrorHandler().Sync(p)
-	if p.HasError() {
-		goto errorExit
-	}
-	_alt = p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 20, p.GetParserRuleContext())
-	if p.HasError() {
-		goto errorExit
-	}
-	for _alt != 2 && _alt != antlr.ATNInvalidAltNumber {
-		if _alt == 1 {
-			{
-				p.SetState(145)
+		_alt = 1
+		for ok := true; ok; ok = _alt != 2 && _alt != antlr.ATNInvalidAltNumber {
+			switch _alt {
+			case 1:
+					{
+						p.SetState(145)
 
-				var _m = p.Match(LatexParserWS)
+						var _m = p.Match(LatexParserLETTER)
 
-				localctx.(*Escaped_wordContext).space = _m
-				if p.HasError() {
-						// Recognition error - abort rule
-						goto errorExit
-				}
+						localctx.(*Escaped_wordContext).content = _m
+						if p.HasError() {
+								// Recognition error - abort rule
+								goto errorExit
+						}
+					}
+
+
+
+
+			default:
+				p.SetError(antlr.NewNoViableAltException(p, nil, nil, nil, nil, nil))
+				goto errorExit
 			}
 
-
+			p.SetState(148)
+			p.GetErrorHandler().Sync(p)
+			_alt = p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 19, p.GetParserRuleContext())
+			if p.HasError() {
+				goto errorExit
+			}
 		}
-		p.SetState(150)
+		p.SetState(153)
 		p.GetErrorHandler().Sync(p)
 		if p.HasError() {
-	    	goto errorExit
-	    }
+			goto errorExit
+		}
 		_alt = p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 20, p.GetParserRuleContext())
 		if p.HasError() {
 			goto errorExit
 		}
-	}
-	p.SetState(152)
-	p.GetErrorHandler().Sync(p)
+		for _alt != 2 && _alt != antlr.ATNInvalidAltNumber {
+			if _alt == 1 {
+				{
+					p.SetState(150)
+
+					var _m = p.Match(LatexParserWS)
+
+					localctx.(*Escaped_wordContext).space = _m
+					if p.HasError() {
+							// Recognition error - abort rule
+							goto errorExit
+					}
+				}
 
 
-	if p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 21, p.GetParserRuleContext()) == 1 {
-		{
-			p.SetState(151)
-			p.Match(LatexParserNEWLINE)
+			}
+			p.SetState(155)
+			p.GetErrorHandler().Sync(p)
 			if p.HasError() {
-					// Recognition error - abort rule
-					goto errorExit
+		    	goto errorExit
+		    }
+			_alt = p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 20, p.GetParserRuleContext())
+			if p.HasError() {
+				goto errorExit
 			}
 		}
 
-		} else if p.HasError() { // JIM
-			goto errorExit
-	}
 
+	case LatexParserT__3, LatexParserT__6, LatexParserSYMBOL:
+		p.EnterOuterAlt(localctx, 2)
+		{
+			p.SetState(156)
+
+			var _lt = p.GetTokenStream().LT(1)
+
+			localctx.(*Escaped_wordContext).content = _lt
+
+			_la = p.GetTokenStream().LA(1)
+
+			if !(((int64(_la) & ^0x3f) == 0 && ((int64(1) << _la) & 1048720) != 0)) {
+				var _ri = p.GetErrorHandler().RecoverInline(p)
+
+				localctx.(*Escaped_wordContext).content = _ri
+			} else {
+				p.GetErrorHandler().ReportMatch(p)
+				p.Consume()
+			}
+		}
+		p.SetState(160)
+		p.GetErrorHandler().Sync(p)
+		if p.HasError() {
+			goto errorExit
+		}
+		_alt = p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 21, p.GetParserRuleContext())
+		if p.HasError() {
+			goto errorExit
+		}
+		for _alt != 2 && _alt != antlr.ATNInvalidAltNumber {
+			if _alt == 1 {
+				{
+					p.SetState(157)
+
+					var _m = p.Match(LatexParserWS)
+
+					localctx.(*Escaped_wordContext).space = _m
+					if p.HasError() {
+							// Recognition error - abort rule
+							goto errorExit
+					}
+				}
+
+
+			}
+			p.SetState(162)
+			p.GetErrorHandler().Sync(p)
+			if p.HasError() {
+		    	goto errorExit
+		    }
+			_alt = p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 21, p.GetParserRuleContext())
+			if p.HasError() {
+				goto errorExit
+			}
+		}
+
+
+
+	default:
+		p.SetError(antlr.NewNoViableAltException(p, nil, nil, nil, nil, nil))
+		goto errorExit
+	}
 
 
 errorExit:
@@ -2641,7 +2696,7 @@ func (p *LatexParser) Composite_tag_separator() (localctx IComposite_tag_separat
 	p.EnterRule(localctx, 20, LatexParserRULE_composite_tag_separator)
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(154)
+		p.SetState(165)
 		p.Match(LatexParserT__7)
 		if p.HasError() {
 				// Recognition error - abort rule
@@ -2826,6 +2881,79 @@ func (s *Composite_tagContext) ExitRule(listener antlr.ParseTreeListener) {
 }
 
 
+type Url_tagContext struct {
+	TagContext
+}
+
+func NewUrl_tagContext(parser antlr.Parser, ctx antlr.ParserRuleContext) *Url_tagContext {
+	var p = new(Url_tagContext)
+
+	InitEmptyTagContext(&p.TagContext)
+	p.parser = parser
+	p.CopyAll(ctx.(*TagContext))
+
+	return p
+}
+
+func (s *Url_tagContext) GetRuleContext() antlr.RuleContext {
+	return s
+}
+
+func (s *Url_tagContext) AllVerbatim_content() []IVerbatim_contentContext {
+	children := s.GetChildren()
+	len := 0
+	for _, ctx := range children {
+		if _, ok := ctx.(IVerbatim_contentContext); ok {
+			len++
+		}
+	}
+
+	tst := make([]IVerbatim_contentContext, len)
+	i := 0
+	for _, ctx := range children {
+		if t, ok := ctx.(IVerbatim_contentContext); ok {
+			tst[i] = t.(IVerbatim_contentContext)
+			i++
+		}
+	}
+
+	return tst
+}
+
+func (s *Url_tagContext) Verbatim_content(i int) IVerbatim_contentContext {
+	var t antlr.RuleContext;
+	j := 0
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IVerbatim_contentContext); ok {
+			if j == i {
+				t = ctx.(antlr.RuleContext);
+				break
+			}
+			j++
+		}
+	}
+
+	if t == nil {
+		return nil
+	}
+
+	return t.(IVerbatim_contentContext)
+}
+
+
+func (s *Url_tagContext) EnterRule(listener antlr.ParseTreeListener) {
+	if listenerT, ok := listener.(LatexListener); ok {
+		listenerT.EnterUrl_tag(s)
+	}
+}
+
+func (s *Url_tagContext) ExitRule(listener antlr.ParseTreeListener) {
+	if listenerT, ok := listener.(LatexListener); ok {
+		listenerT.ExitUrl_tag(s)
+	}
+}
+
+
 type Simple_tagContext struct {
 	TagContext
 	name antlr.Token
@@ -2920,25 +3048,68 @@ func (p *LatexParser) Tag() (localctx ITagContext) {
 	p.EnterRule(localctx, 22, LatexParserRULE_tag)
 	var _la int
 
-	p.SetState(190)
+	p.SetState(209)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {
 		goto errorExit
 	}
 
-	switch p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 27, p.GetParserRuleContext()) {
+	switch p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 29, p.GetParserRuleContext()) {
 	case 1:
-		localctx = NewSimple_tagContext(p, localctx)
+		localctx = NewUrl_tagContext(p, localctx)
 		p.EnterOuterAlt(localctx, 1)
 		{
-			p.SetState(156)
-			p.Match(LatexParserT__6)
+			p.SetState(167)
+			p.Match(LatexParserT__8)
 			if p.HasError() {
 					// Recognition error - abort rule
 					goto errorExit
 			}
 		}
-		p.SetState(158)
+		p.SetState(169)
+		p.GetErrorHandler().Sync(p)
+		if p.HasError() {
+			goto errorExit
+		}
+		_la = p.GetTokenStream().LA(1)
+
+
+		for ok := true; ok; ok = ((int64(_la) & ^0x3f) == 0 && ((int64(1) << _la) & 112985092) != 0) {
+			{
+				p.SetState(168)
+				p.Verbatim_content()
+			}
+
+
+			p.SetState(171)
+			p.GetErrorHandler().Sync(p)
+			if p.HasError() {
+		    	goto errorExit
+		    }
+			_la = p.GetTokenStream().LA(1)
+		}
+		{
+			p.SetState(173)
+			p.Match(LatexParserT__3)
+			if p.HasError() {
+					// Recognition error - abort rule
+					goto errorExit
+			}
+		}
+
+
+	case 2:
+		localctx = NewSimple_tagContext(p, localctx)
+		p.EnterOuterAlt(localctx, 2)
+		{
+			p.SetState(175)
+			p.Match(LatexParserT__9)
+			if p.HasError() {
+					// Recognition error - abort rule
+					goto errorExit
+			}
+		}
+		p.SetState(177)
 		p.GetErrorHandler().Sync(p)
 		if p.HasError() {
 			goto errorExit
@@ -2948,7 +3119,7 @@ func (p *LatexParser) Tag() (localctx ITagContext) {
 
 		for ok := true; ok; ok = _la == LatexParserLETTER {
 			{
-				p.SetState(157)
+				p.SetState(176)
 
 				var _m = p.Match(LatexParserLETTER)
 
@@ -2960,7 +3131,7 @@ func (p *LatexParser) Tag() (localctx ITagContext) {
 			}
 
 
-			p.SetState(160)
+			p.SetState(179)
 			p.GetErrorHandler().Sync(p)
 			if p.HasError() {
 		    	goto errorExit
@@ -2968,14 +3139,14 @@ func (p *LatexParser) Tag() (localctx ITagContext) {
 			_la = p.GetTokenStream().LA(1)
 		}
 		{
-			p.SetState(162)
-			p.Match(LatexParserT__8)
+			p.SetState(181)
+			p.Match(LatexParserT__6)
 			if p.HasError() {
 					// Recognition error - abort rule
 					goto errorExit
 			}
 		}
-		p.SetState(164)
+		p.SetState(183)
 		p.GetErrorHandler().Sync(p)
 		if p.HasError() {
 			goto errorExit
@@ -2983,14 +3154,14 @@ func (p *LatexParser) Tag() (localctx ITagContext) {
 		_la = p.GetTokenStream().LA(1)
 
 
-		for ok := true; ok; ok = ((int64(_la) & ^0x3f) == 0 && ((int64(1) << _la) & 5636224) != 0) {
+		for ok := true; ok; ok = ((int64(_la) & ^0x3f) == 0 && ((int64(1) << _la) & 111412224) != 0) {
 			{
-				p.SetState(163)
+				p.SetState(182)
 				p.Word()
 			}
 
 
-			p.SetState(166)
+			p.SetState(185)
 			p.GetErrorHandler().Sync(p)
 			if p.HasError() {
 		    	goto errorExit
@@ -2998,7 +3169,7 @@ func (p *LatexParser) Tag() (localctx ITagContext) {
 			_la = p.GetTokenStream().LA(1)
 		}
 		{
-			p.SetState(168)
+			p.SetState(187)
 			p.Match(LatexParserT__3)
 			if p.HasError() {
 					// Recognition error - abort rule
@@ -3007,18 +3178,18 @@ func (p *LatexParser) Tag() (localctx ITagContext) {
 		}
 
 
-	case 2:
+	case 3:
 		localctx = NewComposite_tagContext(p, localctx)
-		p.EnterOuterAlt(localctx, 2)
+		p.EnterOuterAlt(localctx, 3)
 		{
-			p.SetState(170)
-			p.Match(LatexParserT__6)
+			p.SetState(189)
+			p.Match(LatexParserT__9)
 			if p.HasError() {
 					// Recognition error - abort rule
 					goto errorExit
 			}
 		}
-		p.SetState(172)
+		p.SetState(191)
 		p.GetErrorHandler().Sync(p)
 		if p.HasError() {
 			goto errorExit
@@ -3028,7 +3199,7 @@ func (p *LatexParser) Tag() (localctx ITagContext) {
 
 		for ok := true; ok; ok = _la == LatexParserLETTER {
 			{
-				p.SetState(171)
+				p.SetState(190)
 
 				var _m = p.Match(LatexParserLETTER)
 
@@ -3040,7 +3211,7 @@ func (p *LatexParser) Tag() (localctx ITagContext) {
 			}
 
 
-			p.SetState(174)
+			p.SetState(193)
 			p.GetErrorHandler().Sync(p)
 			if p.HasError() {
 		    	goto errorExit
@@ -3048,14 +3219,14 @@ func (p *LatexParser) Tag() (localctx ITagContext) {
 			_la = p.GetTokenStream().LA(1)
 		}
 		{
-			p.SetState(176)
-			p.Match(LatexParserT__8)
+			p.SetState(195)
+			p.Match(LatexParserT__6)
 			if p.HasError() {
 					// Recognition error - abort rule
 					goto errorExit
 			}
 		}
-		p.SetState(178)
+		p.SetState(197)
 		p.GetErrorHandler().Sync(p)
 		if p.HasError() {
 			goto errorExit
@@ -3063,14 +3234,14 @@ func (p *LatexParser) Tag() (localctx ITagContext) {
 		_la = p.GetTokenStream().LA(1)
 
 
-		for ok := true; ok; ok = ((int64(_la) & ^0x3f) == 0 && ((int64(1) << _la) & 5636224) != 0) {
+		for ok := true; ok; ok = ((int64(_la) & ^0x3f) == 0 && ((int64(1) << _la) & 111412224) != 0) {
 			{
-				p.SetState(177)
+				p.SetState(196)
 				p.Word()
 			}
 
 
-			p.SetState(180)
+			p.SetState(199)
 			p.GetErrorHandler().Sync(p)
 			if p.HasError() {
 		    	goto errorExit
@@ -3078,10 +3249,10 @@ func (p *LatexParser) Tag() (localctx ITagContext) {
 			_la = p.GetTokenStream().LA(1)
 		}
 		{
-			p.SetState(182)
+			p.SetState(201)
 			p.Composite_tag_separator()
 		}
-		p.SetState(184)
+		p.SetState(203)
 		p.GetErrorHandler().Sync(p)
 		if p.HasError() {
 			goto errorExit
@@ -3089,14 +3260,14 @@ func (p *LatexParser) Tag() (localctx ITagContext) {
 		_la = p.GetTokenStream().LA(1)
 
 
-		for ok := true; ok; ok = ((int64(_la) & ^0x3f) == 0 && ((int64(1) << _la) & 5636224) != 0) {
+		for ok := true; ok; ok = ((int64(_la) & ^0x3f) == 0 && ((int64(1) << _la) & 111412224) != 0) {
 			{
-				p.SetState(183)
+				p.SetState(202)
 				p.Word()
 			}
 
 
-			p.SetState(186)
+			p.SetState(205)
 			p.GetErrorHandler().Sync(p)
 			if p.HasError() {
 		    	goto errorExit
@@ -3104,7 +3275,7 @@ func (p *LatexParser) Tag() (localctx ITagContext) {
 			_la = p.GetTokenStream().LA(1)
 		}
 		{
-			p.SetState(188)
+			p.SetState(207)
 			p.Match(LatexParserT__3)
 			if p.HasError() {
 					// Recognition error - abort rule
@@ -3330,6 +3501,10 @@ func (s *PunctuationContext) PUNCTUATION() antlr.TerminalNode {
 	return s.GetToken(LatexParserPUNCTUATION, 0)
 }
 
+func (s *PunctuationContext) EXTENDED_UNICODE() antlr.TerminalNode {
+	return s.GetToken(LatexParserEXTENDED_UNICODE, 0)
+}
+
 
 func (s *PunctuationContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(LatexListener); ok {
@@ -3384,19 +3559,38 @@ func (s *WsContext) ExitRule(listener antlr.ParseTreeListener) {
 func (p *LatexParser) Word() (localctx IWordContext) {
 	localctx = NewWordContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 24, LatexParserRULE_word)
-	p.SetState(197)
+	var _la int
+
+	p.SetState(219)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {
 		goto errorExit
 	}
 
 	switch p.GetTokenStream().LA(1) {
-	case LatexParserT__6:
+	case LatexParserT__9:
 		localctx = NewEscapedContext(p, localctx)
 		p.EnterOuterAlt(localctx, 1)
 		{
-			p.SetState(192)
-			p.Escaped_word()
+			p.SetState(211)
+			p.Match(LatexParserT__9)
+			if p.HasError() {
+					// Recognition error - abort rule
+					goto errorExit
+			}
+		}
+		p.SetState(213)
+		p.GetErrorHandler().Sync(p)
+
+
+		if p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 30, p.GetParserRuleContext()) == 1 {
+			{
+				p.SetState(212)
+				p.Escaped_word()
+			}
+
+			} else if p.HasError() { // JIM
+				goto errorExit
 		}
 
 
@@ -3404,7 +3598,7 @@ func (p *LatexParser) Word() (localctx IWordContext) {
 		localctx = NewLetterContext(p, localctx)
 		p.EnterOuterAlt(localctx, 2)
 		{
-			p.SetState(193)
+			p.SetState(215)
 			p.Match(LatexParserLETTER)
 			if p.HasError() {
 					// Recognition error - abort rule
@@ -3413,15 +3607,18 @@ func (p *LatexParser) Word() (localctx IWordContext) {
 		}
 
 
-	case LatexParserPUNCTUATION:
+	case LatexParserPUNCTUATION, LatexParserEXTENDED_UNICODE:
 		localctx = NewPunctuationContext(p, localctx)
 		p.EnterOuterAlt(localctx, 3)
 		{
-			p.SetState(194)
-			p.Match(LatexParserPUNCTUATION)
-			if p.HasError() {
-					// Recognition error - abort rule
-					goto errorExit
+			p.SetState(216)
+			_la = p.GetTokenStream().LA(1)
+
+			if !(_la == LatexParserPUNCTUATION || _la == LatexParserEXTENDED_UNICODE) {
+				p.GetErrorHandler().RecoverInline(p)
+			} else {
+				p.GetErrorHandler().ReportMatch(p)
+				p.Consume()
 			}
 		}
 
@@ -3430,7 +3627,7 @@ func (p *LatexParser) Word() (localctx IWordContext) {
 		localctx = NewNumberContext(p, localctx)
 		p.EnterOuterAlt(localctx, 4)
 		{
-			p.SetState(195)
+			p.SetState(217)
 			p.Match(LatexParserNUMBER)
 			if p.HasError() {
 					// Recognition error - abort rule
@@ -3443,7 +3640,7 @@ func (p *LatexParser) Word() (localctx IWordContext) {
 		localctx = NewWsContext(p, localctx)
 		p.EnterOuterAlt(localctx, 5)
 		{
-			p.SetState(196)
+			p.SetState(218)
 			p.Match(LatexParserWS)
 			if p.HasError() {
 					// Recognition error - abort rule
@@ -3578,6 +3775,42 @@ func (s *Verbatim_wordContext) ExitRule(listener antlr.ParseTreeListener) {
 }
 
 
+type Verbatim_specialContext struct {
+	Verbatim_contentContext
+}
+
+func NewVerbatim_specialContext(parser antlr.Parser, ctx antlr.ParserRuleContext) *Verbatim_specialContext {
+	var p = new(Verbatim_specialContext)
+
+	InitEmptyVerbatim_contentContext(&p.Verbatim_contentContext)
+	p.parser = parser
+	p.CopyAll(ctx.(*Verbatim_contentContext))
+
+	return p
+}
+
+func (s *Verbatim_specialContext) GetRuleContext() antlr.RuleContext {
+	return s
+}
+
+func (s *Verbatim_specialContext) SPECIAL() antlr.TerminalNode {
+	return s.GetToken(LatexParserSPECIAL, 0)
+}
+
+
+func (s *Verbatim_specialContext) EnterRule(listener antlr.ParseTreeListener) {
+	if listenerT, ok := listener.(LatexListener); ok {
+		listenerT.EnterVerbatim_special(s)
+	}
+}
+
+func (s *Verbatim_specialContext) ExitRule(listener antlr.ParseTreeListener) {
+	if listenerT, ok := listener.(LatexListener); ok {
+		listenerT.ExitVerbatim_special(s)
+	}
+}
+
+
 type Verbatim_symbolContext struct {
 	Verbatim_contentContext
 }
@@ -3666,18 +3899,18 @@ func (s *Verbatim_linebreakContext) ExitRule(listener antlr.ParseTreeListener) {
 func (p *LatexParser) Verbatim_content() (localctx IVerbatim_contentContext) {
 	localctx = NewVerbatim_contentContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 26, LatexParserRULE_verbatim_content)
-	p.SetState(202)
+	p.SetState(225)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {
 		goto errorExit
 	}
 
 	switch p.GetTokenStream().LA(1) {
-	case LatexParserT__6, LatexParserLETTER, LatexParserPUNCTUATION, LatexParserNUMBER, LatexParserWS:
+	case LatexParserT__9, LatexParserLETTER, LatexParserNUMBER, LatexParserWS, LatexParserPUNCTUATION, LatexParserEXTENDED_UNICODE:
 		localctx = NewVerbatim_wordContext(p, localctx)
 		p.EnterOuterAlt(localctx, 1)
 		{
-			p.SetState(199)
+			p.SetState(221)
 			p.Word()
 		}
 
@@ -3686,8 +3919,21 @@ func (p *LatexParser) Verbatim_content() (localctx IVerbatim_contentContext) {
 		localctx = NewVerbatim_symbolContext(p, localctx)
 		p.EnterOuterAlt(localctx, 2)
 		{
-			p.SetState(200)
+			p.SetState(222)
 			p.Match(LatexParserSYMBOL)
+			if p.HasError() {
+					// Recognition error - abort rule
+					goto errorExit
+			}
+		}
+
+
+	case LatexParserSPECIAL:
+		localctx = NewVerbatim_specialContext(p, localctx)
+		p.EnterOuterAlt(localctx, 3)
+		{
+			p.SetState(223)
+			p.Match(LatexParserSPECIAL)
 			if p.HasError() {
 					// Recognition error - abort rule
 					goto errorExit
@@ -3697,10 +3943,259 @@ func (p *LatexParser) Verbatim_content() (localctx IVerbatim_contentContext) {
 
 	case LatexParserT__1:
 		localctx = NewVerbatim_linebreakContext(p, localctx)
-		p.EnterOuterAlt(localctx, 3)
+		p.EnterOuterAlt(localctx, 4)
 		{
-			p.SetState(201)
+			p.SetState(224)
 			p.Line_break()
+		}
+
+
+
+	default:
+		p.SetError(antlr.NewNoViableAltException(p, nil, nil, nil, nil, nil))
+		goto errorExit
+	}
+
+
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
+	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
+}
+
+
+// ICurly_parensContext is an interface to support dynamic dispatch.
+type ICurly_parensContext interface {
+	antlr.ParserRuleContext
+
+	// GetParser returns the parser.
+	GetParser() antlr.Parser
+	// IsCurly_parensContext differentiates from other interfaces.
+	IsCurly_parensContext()
+}
+
+type Curly_parensContext struct {
+	antlr.BaseParserRuleContext
+	parser antlr.Parser
+}
+
+func NewEmptyCurly_parensContext() *Curly_parensContext {
+	var p = new(Curly_parensContext)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = LatexParserRULE_curly_parens
+	return p
+}
+
+func InitEmptyCurly_parensContext(p *Curly_parensContext)  {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = LatexParserRULE_curly_parens
+}
+
+func (*Curly_parensContext) IsCurly_parensContext() {}
+
+func NewCurly_parensContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *Curly_parensContext {
+	var p = new(Curly_parensContext)
+
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
+
+	p.parser = parser
+	p.RuleIndex = LatexParserRULE_curly_parens
+
+	return p
+}
+
+func (s *Curly_parensContext) GetParser() antlr.Parser { return s.parser }
+func (s *Curly_parensContext) GetRuleContext() antlr.RuleContext {
+	return s
+}
+
+func (s *Curly_parensContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
+	return antlr.TreesStringTree(s, ruleNames, recog)
+}
+
+
+func (s *Curly_parensContext) EnterRule(listener antlr.ParseTreeListener) {
+	if listenerT, ok := listener.(LatexListener); ok {
+		listenerT.EnterCurly_parens(s)
+	}
+}
+
+func (s *Curly_parensContext) ExitRule(listener antlr.ParseTreeListener) {
+	if listenerT, ok := listener.(LatexListener); ok {
+		listenerT.ExitCurly_parens(s)
+	}
+}
+
+
+
+
+func (p *LatexParser) Curly_parens() (localctx ICurly_parensContext) {
+	localctx = NewCurly_parensContext(p, p.GetParserRuleContext(), p.GetState())
+	p.EnterRule(localctx, 28, LatexParserRULE_curly_parens)
+	var _la int
+
+	p.EnterOuterAlt(localctx, 1)
+	{
+		p.SetState(227)
+		_la = p.GetTokenStream().LA(1)
+
+		if !(_la == LatexParserT__3 || _la == LatexParserT__6) {
+			p.GetErrorHandler().RecoverInline(p)
+		} else {
+			p.GetErrorHandler().ReportMatch(p)
+			p.Consume()
+		}
+	}
+
+
+
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
+	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
+}
+
+
+// IVerbatim_block_contentContext is an interface to support dynamic dispatch.
+type IVerbatim_block_contentContext interface {
+	antlr.ParserRuleContext
+
+	// GetParser returns the parser.
+	GetParser() antlr.Parser
+
+	// Getter signatures
+	Verbatim_content() IVerbatim_contentContext
+	Curly_parens() ICurly_parensContext
+
+	// IsVerbatim_block_contentContext differentiates from other interfaces.
+	IsVerbatim_block_contentContext()
+}
+
+type Verbatim_block_contentContext struct {
+	antlr.BaseParserRuleContext
+	parser antlr.Parser
+}
+
+func NewEmptyVerbatim_block_contentContext() *Verbatim_block_contentContext {
+	var p = new(Verbatim_block_contentContext)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = LatexParserRULE_verbatim_block_content
+	return p
+}
+
+func InitEmptyVerbatim_block_contentContext(p *Verbatim_block_contentContext)  {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = LatexParserRULE_verbatim_block_content
+}
+
+func (*Verbatim_block_contentContext) IsVerbatim_block_contentContext() {}
+
+func NewVerbatim_block_contentContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *Verbatim_block_contentContext {
+	var p = new(Verbatim_block_contentContext)
+
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
+
+	p.parser = parser
+	p.RuleIndex = LatexParserRULE_verbatim_block_content
+
+	return p
+}
+
+func (s *Verbatim_block_contentContext) GetParser() antlr.Parser { return s.parser }
+
+func (s *Verbatim_block_contentContext) Verbatim_content() IVerbatim_contentContext {
+	var t antlr.RuleContext;
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IVerbatim_contentContext); ok {
+			t = ctx.(antlr.RuleContext);
+			break
+		}
+	}
+
+	if t == nil {
+		return nil
+	}
+
+	return t.(IVerbatim_contentContext)
+}
+
+func (s *Verbatim_block_contentContext) Curly_parens() ICurly_parensContext {
+	var t antlr.RuleContext;
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(ICurly_parensContext); ok {
+			t = ctx.(antlr.RuleContext);
+			break
+		}
+	}
+
+	if t == nil {
+		return nil
+	}
+
+	return t.(ICurly_parensContext)
+}
+
+func (s *Verbatim_block_contentContext) GetRuleContext() antlr.RuleContext {
+	return s
+}
+
+func (s *Verbatim_block_contentContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
+	return antlr.TreesStringTree(s, ruleNames, recog)
+}
+
+
+func (s *Verbatim_block_contentContext) EnterRule(listener antlr.ParseTreeListener) {
+	if listenerT, ok := listener.(LatexListener); ok {
+		listenerT.EnterVerbatim_block_content(s)
+	}
+}
+
+func (s *Verbatim_block_contentContext) ExitRule(listener antlr.ParseTreeListener) {
+	if listenerT, ok := listener.(LatexListener); ok {
+		listenerT.ExitVerbatim_block_content(s)
+	}
+}
+
+
+
+
+func (p *LatexParser) Verbatim_block_content() (localctx IVerbatim_block_contentContext) {
+	localctx = NewVerbatim_block_contentContext(p, p.GetParserRuleContext(), p.GetState())
+	p.EnterRule(localctx, 30, LatexParserRULE_verbatim_block_content)
+	p.SetState(231)
+	p.GetErrorHandler().Sync(p)
+	if p.HasError() {
+		goto errorExit
+	}
+
+	switch p.GetTokenStream().LA(1) {
+	case LatexParserT__1, LatexParserT__9, LatexParserLETTER, LatexParserSPECIAL, LatexParserSYMBOL, LatexParserNUMBER, LatexParserWS, LatexParserPUNCTUATION, LatexParserEXTENDED_UNICODE:
+		p.EnterOuterAlt(localctx, 1)
+		{
+			p.SetState(229)
+			p.Verbatim_content()
+		}
+
+
+	case LatexParserT__3, LatexParserT__6:
+		p.EnterOuterAlt(localctx, 2)
+		{
+			p.SetState(230)
+			p.Curly_parens()
 		}
 
 
@@ -3734,8 +4229,8 @@ type IVerbatim_lineContext interface {
 
 	// Getter signatures
 	NEWLINE() antlr.TerminalNode
-	AllVerbatim_content() []IVerbatim_contentContext
-	Verbatim_content(i int) IVerbatim_contentContext
+	AllVerbatim_block_content() []IVerbatim_block_contentContext
+	Verbatim_block_content(i int) IVerbatim_block_contentContext
 
 	// IsVerbatim_lineContext differentiates from other interfaces.
 	IsVerbatim_lineContext()
@@ -3777,20 +4272,20 @@ func (s *Verbatim_lineContext) NEWLINE() antlr.TerminalNode {
 	return s.GetToken(LatexParserNEWLINE, 0)
 }
 
-func (s *Verbatim_lineContext) AllVerbatim_content() []IVerbatim_contentContext {
+func (s *Verbatim_lineContext) AllVerbatim_block_content() []IVerbatim_block_contentContext {
 	children := s.GetChildren()
 	len := 0
 	for _, ctx := range children {
-		if _, ok := ctx.(IVerbatim_contentContext); ok {
+		if _, ok := ctx.(IVerbatim_block_contentContext); ok {
 			len++
 		}
 	}
 
-	tst := make([]IVerbatim_contentContext, len)
+	tst := make([]IVerbatim_block_contentContext, len)
 	i := 0
 	for _, ctx := range children {
-		if t, ok := ctx.(IVerbatim_contentContext); ok {
-			tst[i] = t.(IVerbatim_contentContext)
+		if t, ok := ctx.(IVerbatim_block_contentContext); ok {
+			tst[i] = t.(IVerbatim_block_contentContext)
 			i++
 		}
 	}
@@ -3798,11 +4293,11 @@ func (s *Verbatim_lineContext) AllVerbatim_content() []IVerbatim_contentContext 
 	return tst
 }
 
-func (s *Verbatim_lineContext) Verbatim_content(i int) IVerbatim_contentContext {
+func (s *Verbatim_lineContext) Verbatim_block_content(i int) IVerbatim_block_contentContext {
 	var t antlr.RuleContext;
 	j := 0
 	for _, ctx := range s.GetChildren() {
-		if _, ok := ctx.(IVerbatim_contentContext); ok {
+		if _, ok := ctx.(IVerbatim_block_contentContext); ok {
 			if j == i {
 				t = ctx.(antlr.RuleContext);
 				break
@@ -3815,7 +4310,7 @@ func (s *Verbatim_lineContext) Verbatim_content(i int) IVerbatim_contentContext 
 		return nil
 	}
 
-	return t.(IVerbatim_contentContext)
+	return t.(IVerbatim_block_contentContext)
 }
 
 func (s *Verbatim_lineContext) GetRuleContext() antlr.RuleContext {
@@ -3844,11 +4339,11 @@ func (s *Verbatim_lineContext) ExitRule(listener antlr.ParseTreeListener) {
 
 func (p *LatexParser) Verbatim_line() (localctx IVerbatim_lineContext) {
 	localctx = NewVerbatim_lineContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 28, LatexParserRULE_verbatim_line)
+	p.EnterRule(localctx, 32, LatexParserRULE_verbatim_line)
 	var _la int
 
 	p.EnterOuterAlt(localctx, 1)
-	p.SetState(207)
+	p.SetState(236)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {
 		goto errorExit
@@ -3856,14 +4351,14 @@ func (p *LatexParser) Verbatim_line() (localctx IVerbatim_lineContext) {
 	_la = p.GetTokenStream().LA(1)
 
 
-	for ((int64(_la) & ^0x3f) == 0 && ((int64(1) << _la) & 6160516) != 0) {
+	for ((int64(_la) & ^0x3f) == 0 && ((int64(1) << _la) & 112985236) != 0) {
 		{
-			p.SetState(204)
-			p.Verbatim_content()
+			p.SetState(233)
+			p.Verbatim_block_content()
 		}
 
 
-		p.SetState(209)
+		p.SetState(238)
 		p.GetErrorHandler().Sync(p)
 		if p.HasError() {
 	    	goto errorExit
@@ -3871,7 +4366,7 @@ func (p *LatexParser) Verbatim_line() (localctx IVerbatim_lineContext) {
 		_la = p.GetTokenStream().LA(1)
 	}
 	{
-		p.SetState(210)
+		p.SetState(239)
 		p.Match(LatexParserNEWLINE)
 		if p.HasError() {
 				// Recognition error - abort rule
@@ -3879,6 +4374,178 @@ func (p *LatexParser) Verbatim_line() (localctx IVerbatim_lineContext) {
 		}
 	}
 
+
+
+errorExit:
+	if p.HasError() {
+		v := p.GetError()
+		localctx.SetException(v)
+		p.GetErrorHandler().ReportError(p, v)
+		p.GetErrorHandler().Recover(p, v)
+		p.SetError(nil)
+	}
+	p.ExitRule()
+	return localctx
+	goto errorExit // Trick to prevent compiler error if the label is not used
+}
+
+
+// IBlock_contentContext is an interface to support dynamic dispatch.
+type IBlock_contentContext interface {
+	antlr.ParserRuleContext
+
+	// GetParser returns the parser.
+	GetParser() antlr.Parser
+
+	// Getter signatures
+	Tag() ITagContext
+	Word() IWordContext
+	Curly_parens() ICurly_parensContext
+
+	// IsBlock_contentContext differentiates from other interfaces.
+	IsBlock_contentContext()
+}
+
+type Block_contentContext struct {
+	antlr.BaseParserRuleContext
+	parser antlr.Parser
+}
+
+func NewEmptyBlock_contentContext() *Block_contentContext {
+	var p = new(Block_contentContext)
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = LatexParserRULE_block_content
+	return p
+}
+
+func InitEmptyBlock_contentContext(p *Block_contentContext)  {
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.RuleIndex = LatexParserRULE_block_content
+}
+
+func (*Block_contentContext) IsBlock_contentContext() {}
+
+func NewBlock_contentContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *Block_contentContext {
+	var p = new(Block_contentContext)
+
+	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
+
+	p.parser = parser
+	p.RuleIndex = LatexParserRULE_block_content
+
+	return p
+}
+
+func (s *Block_contentContext) GetParser() antlr.Parser { return s.parser }
+
+func (s *Block_contentContext) Tag() ITagContext {
+	var t antlr.RuleContext;
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(ITagContext); ok {
+			t = ctx.(antlr.RuleContext);
+			break
+		}
+	}
+
+	if t == nil {
+		return nil
+	}
+
+	return t.(ITagContext)
+}
+
+func (s *Block_contentContext) Word() IWordContext {
+	var t antlr.RuleContext;
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IWordContext); ok {
+			t = ctx.(antlr.RuleContext);
+			break
+		}
+	}
+
+	if t == nil {
+		return nil
+	}
+
+	return t.(IWordContext)
+}
+
+func (s *Block_contentContext) Curly_parens() ICurly_parensContext {
+	var t antlr.RuleContext;
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(ICurly_parensContext); ok {
+			t = ctx.(antlr.RuleContext);
+			break
+		}
+	}
+
+	if t == nil {
+		return nil
+	}
+
+	return t.(ICurly_parensContext)
+}
+
+func (s *Block_contentContext) GetRuleContext() antlr.RuleContext {
+	return s
+}
+
+func (s *Block_contentContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
+	return antlr.TreesStringTree(s, ruleNames, recog)
+}
+
+
+func (s *Block_contentContext) EnterRule(listener antlr.ParseTreeListener) {
+	if listenerT, ok := listener.(LatexListener); ok {
+		listenerT.EnterBlock_content(s)
+	}
+}
+
+func (s *Block_contentContext) ExitRule(listener antlr.ParseTreeListener) {
+	if listenerT, ok := listener.(LatexListener); ok {
+		listenerT.ExitBlock_content(s)
+	}
+}
+
+
+
+
+func (p *LatexParser) Block_content() (localctx IBlock_contentContext) {
+	localctx = NewBlock_contentContext(p, p.GetParserRuleContext(), p.GetState())
+	p.EnterRule(localctx, 34, LatexParserRULE_block_content)
+	p.SetState(244)
+	p.GetErrorHandler().Sync(p)
+	if p.HasError() {
+		goto errorExit
+	}
+
+	switch p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 35, p.GetParserRuleContext()) {
+	case 1:
+		p.EnterOuterAlt(localctx, 1)
+		{
+			p.SetState(241)
+			p.Tag()
+		}
+
+
+	case 2:
+		p.EnterOuterAlt(localctx, 2)
+		{
+			p.SetState(242)
+			p.Word()
+		}
+
+
+	case 3:
+		p.EnterOuterAlt(localctx, 3)
+		{
+			p.SetState(243)
+			p.Curly_parens()
+		}
+
+	case antlr.ATNInvalidAltNumber:
+		goto errorExit
+	}
 
 
 errorExit:
@@ -3903,8 +4570,8 @@ type IBlock_lineContext interface {
 	GetParser() antlr.Parser
 
 	// Getter signatures
-	AllWord() []IWordContext
-	Word(i int) IWordContext
+	AllBlock_content() []IBlock_contentContext
+	Block_content(i int) IBlock_contentContext
 	AllNEWLINE() []antlr.TerminalNode
 	NEWLINE(i int) antlr.TerminalNode
 
@@ -3944,20 +4611,20 @@ func NewBlock_lineContext(parser antlr.Parser, parent antlr.ParserRuleContext, i
 
 func (s *Block_lineContext) GetParser() antlr.Parser { return s.parser }
 
-func (s *Block_lineContext) AllWord() []IWordContext {
+func (s *Block_lineContext) AllBlock_content() []IBlock_contentContext {
 	children := s.GetChildren()
 	len := 0
 	for _, ctx := range children {
-		if _, ok := ctx.(IWordContext); ok {
+		if _, ok := ctx.(IBlock_contentContext); ok {
 			len++
 		}
 	}
 
-	tst := make([]IWordContext, len)
+	tst := make([]IBlock_contentContext, len)
 	i := 0
 	for _, ctx := range children {
-		if t, ok := ctx.(IWordContext); ok {
-			tst[i] = t.(IWordContext)
+		if t, ok := ctx.(IBlock_contentContext); ok {
+			tst[i] = t.(IBlock_contentContext)
 			i++
 		}
 	}
@@ -3965,11 +4632,11 @@ func (s *Block_lineContext) AllWord() []IWordContext {
 	return tst
 }
 
-func (s *Block_lineContext) Word(i int) IWordContext {
+func (s *Block_lineContext) Block_content(i int) IBlock_contentContext {
 	var t antlr.RuleContext;
 	j := 0
 	for _, ctx := range s.GetChildren() {
-		if _, ok := ctx.(IWordContext); ok {
+		if _, ok := ctx.(IBlock_contentContext); ok {
 			if j == i {
 				t = ctx.(antlr.RuleContext);
 				break
@@ -3982,7 +4649,7 @@ func (s *Block_lineContext) Word(i int) IWordContext {
 		return nil
 	}
 
-	return t.(IWordContext)
+	return t.(IBlock_contentContext)
 }
 
 func (s *Block_lineContext) AllNEWLINE() []antlr.TerminalNode {
@@ -4019,11 +4686,11 @@ func (s *Block_lineContext) ExitRule(listener antlr.ParseTreeListener) {
 
 func (p *LatexParser) Block_line() (localctx IBlock_lineContext) {
 	localctx = NewBlock_lineContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 30, LatexParserRULE_block_line)
+	p.EnterRule(localctx, 36, LatexParserRULE_block_line)
 	var _la int
 
 	p.EnterOuterAlt(localctx, 1)
-	p.SetState(213)
+	p.SetState(247)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {
 		goto errorExit
@@ -4031,21 +4698,21 @@ func (p *LatexParser) Block_line() (localctx IBlock_lineContext) {
 	_la = p.GetTokenStream().LA(1)
 
 
-	for ok := true; ok; ok = ((int64(_la) & ^0x3f) == 0 && ((int64(1) << _la) & 5636224) != 0) {
+	for ok := true; ok; ok = ((int64(_la) & ^0x3f) == 0 && ((int64(1) << _la) & 111412880) != 0) {
 		{
-			p.SetState(212)
-			p.Word()
+			p.SetState(246)
+			p.Block_content()
 		}
 
 
-		p.SetState(215)
+		p.SetState(249)
 		p.GetErrorHandler().Sync(p)
 		if p.HasError() {
 	    	goto errorExit
 	    }
 		_la = p.GetTokenStream().LA(1)
 	}
-	p.SetState(218)
+	p.SetState(252)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {
 		goto errorExit
@@ -4055,7 +4722,7 @@ func (p *LatexParser) Block_line() (localctx IBlock_lineContext) {
 
 	for ok := true; ok; ok = _la == LatexParserNEWLINE {
 		{
-			p.SetState(217)
+			p.SetState(251)
 			p.Match(LatexParserNEWLINE)
 			if p.HasError() {
 					// Recognition error - abort rule
@@ -4064,7 +4731,7 @@ func (p *LatexParser) Block_line() (localctx IBlock_lineContext) {
 		}
 
 
-		p.SetState(220)
+		p.SetState(254)
 		p.GetErrorHandler().Sync(p)
 		if p.HasError() {
 	    	goto errorExit
@@ -4186,31 +4853,59 @@ func (s *Block_itemContext) ExitRule(listener antlr.ParseTreeListener) {
 
 func (p *LatexParser) Block_item() (localctx IBlock_itemContext) {
 	localctx = NewBlock_itemContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 32, LatexParserRULE_block_item)
+	p.EnterRule(localctx, 38, LatexParserRULE_block_item)
+	var _la int
+
 	var _alt int
 
 	p.EnterOuterAlt(localctx, 1)
+	p.SetState(259)
+	p.GetErrorHandler().Sync(p)
+	if p.HasError() {
+		goto errorExit
+	}
+	_la = p.GetTokenStream().LA(1)
+
+
+	for _la == LatexParserWS {
+		{
+			p.SetState(256)
+			p.Match(LatexParserWS)
+			if p.HasError() {
+					// Recognition error - abort rule
+					goto errorExit
+			}
+		}
+
+
+		p.SetState(261)
+		p.GetErrorHandler().Sync(p)
+		if p.HasError() {
+	    	goto errorExit
+	    }
+		_la = p.GetTokenStream().LA(1)
+	}
 	{
-		p.SetState(222)
-		p.Match(LatexParserT__9)
+		p.SetState(262)
+		p.Match(LatexParserT__10)
 		if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
 		}
 	}
-	p.SetState(226)
+	p.SetState(266)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {
 		goto errorExit
 	}
-	_alt = p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 33, p.GetParserRuleContext())
+	_alt = p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 39, p.GetParserRuleContext())
 	if p.HasError() {
 		goto errorExit
 	}
 	for _alt != 2 && _alt != antlr.ATNInvalidAltNumber {
 		if _alt == 1 {
 			{
-				p.SetState(223)
+				p.SetState(263)
 				p.Match(LatexParserWS)
 				if p.HasError() {
 						// Recognition error - abort rule
@@ -4220,18 +4915,18 @@ func (p *LatexParser) Block_item() (localctx IBlock_itemContext) {
 
 
 		}
-		p.SetState(228)
+		p.SetState(268)
 		p.GetErrorHandler().Sync(p)
 		if p.HasError() {
 	    	goto errorExit
 	    }
-		_alt = p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 33, p.GetParserRuleContext())
+		_alt = p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 39, p.GetParserRuleContext())
 		if p.HasError() {
 			goto errorExit
 		}
 	}
 	{
-		p.SetState(229)
+		p.SetState(269)
 		p.Block_line()
 	}
 
@@ -4554,114 +5249,28 @@ func (s *VerbatimContext) ExitRule(listener antlr.ParseTreeListener) {
 
 func (p *LatexParser) Block() (localctx IBlockContext) {
 	localctx = NewBlockContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 34, LatexParserRULE_block)
+	p.EnterRule(localctx, 40, LatexParserRULE_block)
 	var _la int
 
-	p.SetState(279)
+	p.SetState(319)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {
 		goto errorExit
 	}
 
 	switch p.GetTokenStream().LA(1) {
-	case LatexParserT__10:
+	case LatexParserT__11:
 		localctx = NewItemizeContext(p, localctx)
 		p.EnterOuterAlt(localctx, 1)
 		{
-			p.SetState(231)
-			p.Match(LatexParserT__10)
-			if p.HasError() {
-					// Recognition error - abort rule
-					goto errorExit
-			}
-		}
-		p.SetState(235)
-		p.GetErrorHandler().Sync(p)
-		if p.HasError() {
-			goto errorExit
-		}
-		_la = p.GetTokenStream().LA(1)
-
-
-		for _la == LatexParserNEWLINE {
-			{
-				p.SetState(232)
-				p.Match(LatexParserNEWLINE)
-				if p.HasError() {
-						// Recognition error - abort rule
-						goto errorExit
-				}
-			}
-
-
-			p.SetState(237)
-			p.GetErrorHandler().Sync(p)
-			if p.HasError() {
-		    	goto errorExit
-		    }
-			_la = p.GetTokenStream().LA(1)
-		}
-		p.SetState(241)
-		p.GetErrorHandler().Sync(p)
-		if p.HasError() {
-			goto errorExit
-		}
-		_la = p.GetTokenStream().LA(1)
-
-
-		for _la == LatexParserT__9 {
-			{
-				p.SetState(238)
-				p.Block_item()
-			}
-
-
-			p.SetState(243)
-			p.GetErrorHandler().Sync(p)
-			if p.HasError() {
-		    	goto errorExit
-		    }
-			_la = p.GetTokenStream().LA(1)
-		}
-		{
-			p.SetState(244)
+			p.SetState(271)
 			p.Match(LatexParserT__11)
 			if p.HasError() {
 					// Recognition error - abort rule
 					goto errorExit
 			}
 		}
-		p.SetState(246)
-		p.GetErrorHandler().Sync(p)
-
-
-		if p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 36, p.GetParserRuleContext()) == 1 {
-			{
-				p.SetState(245)
-				p.Match(LatexParserNEWLINE)
-				if p.HasError() {
-						// Recognition error - abort rule
-						goto errorExit
-				}
-			}
-
-			} else if p.HasError() { // JIM
-				goto errorExit
-		}
-
-
-	case LatexParserT__12:
-		localctx = NewEnumerateContext(p, localctx)
-		p.EnterOuterAlt(localctx, 2)
-		{
-			p.SetState(248)
-			p.Match(LatexParserT__12)
-			if p.HasError() {
-					// Recognition error - abort rule
-					goto errorExit
-			}
-		}
-		p.SetState(252)
+		p.SetState(275)
 		p.GetErrorHandler().Sync(p)
 		if p.HasError() {
 			goto errorExit
@@ -4671,7 +5280,7 @@ func (p *LatexParser) Block() (localctx IBlockContext) {
 
 		for _la == LatexParserNEWLINE {
 			{
-				p.SetState(249)
+				p.SetState(272)
 				p.Match(LatexParserNEWLINE)
 				if p.HasError() {
 						// Recognition error - abort rule
@@ -4680,14 +5289,14 @@ func (p *LatexParser) Block() (localctx IBlockContext) {
 			}
 
 
-			p.SetState(254)
+			p.SetState(277)
 			p.GetErrorHandler().Sync(p)
 			if p.HasError() {
 		    	goto errorExit
 		    }
 			_la = p.GetTokenStream().LA(1)
 		}
-		p.SetState(258)
+		p.SetState(281)
 		p.GetErrorHandler().Sync(p)
 		if p.HasError() {
 			goto errorExit
@@ -4695,14 +5304,14 @@ func (p *LatexParser) Block() (localctx IBlockContext) {
 		_la = p.GetTokenStream().LA(1)
 
 
-		for _la == LatexParserT__9 {
+		for _la == LatexParserT__10 || _la == LatexParserWS {
 			{
-				p.SetState(255)
+				p.SetState(278)
 				p.Block_item()
 			}
 
 
-			p.SetState(260)
+			p.SetState(283)
 			p.GetErrorHandler().Sync(p)
 			if p.HasError() {
 		    	goto errorExit
@@ -4710,61 +5319,44 @@ func (p *LatexParser) Block() (localctx IBlockContext) {
 			_la = p.GetTokenStream().LA(1)
 		}
 		{
-			p.SetState(261)
+			p.SetState(284)
+			p.Match(LatexParserT__12)
+			if p.HasError() {
+					// Recognition error - abort rule
+					goto errorExit
+			}
+		}
+		p.SetState(286)
+		p.GetErrorHandler().Sync(p)
+
+
+		if p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 42, p.GetParserRuleContext()) == 1 {
+			{
+				p.SetState(285)
+				p.Match(LatexParserNEWLINE)
+				if p.HasError() {
+						// Recognition error - abort rule
+						goto errorExit
+				}
+			}
+
+			} else if p.HasError() { // JIM
+				goto errorExit
+		}
+
+
+	case LatexParserT__13:
+		localctx = NewEnumerateContext(p, localctx)
+		p.EnterOuterAlt(localctx, 2)
+		{
+			p.SetState(288)
 			p.Match(LatexParserT__13)
 			if p.HasError() {
 					// Recognition error - abort rule
 					goto errorExit
 			}
 		}
-		p.SetState(263)
-		p.GetErrorHandler().Sync(p)
-
-
-		if p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 39, p.GetParserRuleContext()) == 1 {
-			{
-				p.SetState(262)
-				p.Match(LatexParserNEWLINE)
-				if p.HasError() {
-						// Recognition error - abort rule
-						goto errorExit
-				}
-			}
-
-			} else if p.HasError() { // JIM
-				goto errorExit
-		}
-
-
-	case LatexParserT__14:
-		localctx = NewVerbatimContext(p, localctx)
-		p.EnterOuterAlt(localctx, 3)
-		{
-			p.SetState(265)
-			p.Match(LatexParserT__14)
-			if p.HasError() {
-					// Recognition error - abort rule
-					goto errorExit
-			}
-		}
-		p.SetState(267)
-		p.GetErrorHandler().Sync(p)
-
-
-		if p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 40, p.GetParserRuleContext()) == 1 {
-			{
-				p.SetState(266)
-				p.Match(LatexParserNEWLINE)
-				if p.HasError() {
-						// Recognition error - abort rule
-						goto errorExit
-				}
-			}
-
-			} else if p.HasError() { // JIM
-				goto errorExit
-		}
-		p.SetState(272)
+		p.SetState(292)
 		p.GetErrorHandler().Sync(p)
 		if p.HasError() {
 			goto errorExit
@@ -4772,14 +5364,40 @@ func (p *LatexParser) Block() (localctx IBlockContext) {
 		_la = p.GetTokenStream().LA(1)
 
 
-		for ((int64(_la) & ^0x3f) == 0 && ((int64(1) << _la) & 8257668) != 0) {
+		for _la == LatexParserNEWLINE {
 			{
-				p.SetState(269)
-				p.Verbatim_line()
+				p.SetState(289)
+				p.Match(LatexParserNEWLINE)
+				if p.HasError() {
+						// Recognition error - abort rule
+						goto errorExit
+				}
 			}
 
 
-			p.SetState(274)
+			p.SetState(294)
+			p.GetErrorHandler().Sync(p)
+			if p.HasError() {
+		    	goto errorExit
+		    }
+			_la = p.GetTokenStream().LA(1)
+		}
+		p.SetState(298)
+		p.GetErrorHandler().Sync(p)
+		if p.HasError() {
+			goto errorExit
+		}
+		_la = p.GetTokenStream().LA(1)
+
+
+		for _la == LatexParserT__10 || _la == LatexParserWS {
+			{
+				p.SetState(295)
+				p.Block_item()
+			}
+
+
+			p.SetState(300)
 			p.GetErrorHandler().Sync(p)
 			if p.HasError() {
 		    	goto errorExit
@@ -4787,20 +5405,97 @@ func (p *LatexParser) Block() (localctx IBlockContext) {
 			_la = p.GetTokenStream().LA(1)
 		}
 		{
-			p.SetState(275)
+			p.SetState(301)
+			p.Match(LatexParserT__14)
+			if p.HasError() {
+					// Recognition error - abort rule
+					goto errorExit
+			}
+		}
+		p.SetState(303)
+		p.GetErrorHandler().Sync(p)
+
+
+		if p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 45, p.GetParserRuleContext()) == 1 {
+			{
+				p.SetState(302)
+				p.Match(LatexParserNEWLINE)
+				if p.HasError() {
+						// Recognition error - abort rule
+						goto errorExit
+				}
+			}
+
+			} else if p.HasError() { // JIM
+				goto errorExit
+		}
+
+
+	case LatexParserT__15:
+		localctx = NewVerbatimContext(p, localctx)
+		p.EnterOuterAlt(localctx, 3)
+		{
+			p.SetState(305)
 			p.Match(LatexParserT__15)
 			if p.HasError() {
 					// Recognition error - abort rule
 					goto errorExit
 			}
 		}
-		p.SetState(277)
+		p.SetState(307)
 		p.GetErrorHandler().Sync(p)
 
 
-		if p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 42, p.GetParserRuleContext()) == 1 {
+		if p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 46, p.GetParserRuleContext()) == 1 {
 			{
-				p.SetState(276)
+				p.SetState(306)
+				p.Match(LatexParserNEWLINE)
+				if p.HasError() {
+						// Recognition error - abort rule
+						goto errorExit
+				}
+			}
+
+			} else if p.HasError() { // JIM
+				goto errorExit
+		}
+		p.SetState(312)
+		p.GetErrorHandler().Sync(p)
+		if p.HasError() {
+			goto errorExit
+		}
+		_la = p.GetTokenStream().LA(1)
+
+
+		for ((int64(_la) & ^0x3f) == 0 && ((int64(1) << _la) & 117179540) != 0) {
+			{
+				p.SetState(309)
+				p.Verbatim_line()
+			}
+
+
+			p.SetState(314)
+			p.GetErrorHandler().Sync(p)
+			if p.HasError() {
+		    	goto errorExit
+		    }
+			_la = p.GetTokenStream().LA(1)
+		}
+		{
+			p.SetState(315)
+			p.Match(LatexParserT__16)
+			if p.HasError() {
+					// Recognition error - abort rule
+					goto errorExit
+			}
+		}
+		p.SetState(317)
+		p.GetErrorHandler().Sync(p)
+
+
+		if p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 48, p.GetParserRuleContext()) == 1 {
+			{
+				p.SetState(316)
 				p.Match(LatexParserNEWLINE)
 				if p.HasError() {
 						// Recognition error - abort rule

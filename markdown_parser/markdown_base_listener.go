@@ -50,11 +50,23 @@ func (s *BaseMarkdownListener) EnterUrl(ctx *UrlContext) {}
 // ExitUrl is called when production url is exited.
 func (s *BaseMarkdownListener) ExitUrl(ctx *UrlContext) {}
 
+// EnterStar is called when production star is entered.
+func (s *BaseMarkdownListener) EnterStar(ctx *StarContext) {}
+
+// ExitStar is called when production star is exited.
+func (s *BaseMarkdownListener) ExitStar(ctx *StarContext) {}
+
 // EnterSymbol is called when production symbol is entered.
 func (s *BaseMarkdownListener) EnterSymbol(ctx *SymbolContext) {}
 
 // ExitSymbol is called when production symbol is exited.
 func (s *BaseMarkdownListener) ExitSymbol(ctx *SymbolContext) {}
+
+// EnterSpecial is called when production special is entered.
+func (s *BaseMarkdownListener) EnterSpecial(ctx *SpecialContext) {}
+
+// ExitSpecial is called when production special is exited.
+func (s *BaseMarkdownListener) ExitSpecial(ctx *SpecialContext) {}
 
 // EnterLetter is called when production letter is entered.
 func (s *BaseMarkdownListener) EnterLetter(ctx *LetterContext) {}

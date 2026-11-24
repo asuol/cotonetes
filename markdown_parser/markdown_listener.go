@@ -23,8 +23,14 @@ type MarkdownListener interface {
 	// EnterUrl is called when entering the url production.
 	EnterUrl(c *UrlContext)
 
+	// EnterStar is called when entering the star production.
+	EnterStar(c *StarContext)
+
 	// EnterSymbol is called when entering the symbol production.
 	EnterSymbol(c *SymbolContext)
+
+	// EnterSpecial is called when entering the special production.
+	EnterSpecial(c *SpecialContext)
 
 	// EnterLetter is called when entering the letter production.
 	EnterLetter(c *LetterContext)
@@ -86,8 +92,14 @@ type MarkdownListener interface {
 	// ExitUrl is called when exiting the url production.
 	ExitUrl(c *UrlContext)
 
+	// ExitStar is called when exiting the star production.
+	ExitStar(c *StarContext)
+
 	// ExitSymbol is called when exiting the symbol production.
 	ExitSymbol(c *SymbolContext)
+
+	// ExitSpecial is called when exiting the special production.
+	ExitSpecial(c *SpecialContext)
 
 	// ExitLetter is called when exiting the letter production.
 	ExitLetter(c *LetterContext)

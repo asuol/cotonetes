@@ -25,6 +25,10 @@ func NoteToLatex(note types.Note) []string {
 		latex = append(latex, line)
 	}
 
+	latex = append(latex, `\\`)
+
+	latex = append(latex, ``)
+
 	latex = append(latex, `\hrulefill`)
 
 	latex = append(latex, `\\`)

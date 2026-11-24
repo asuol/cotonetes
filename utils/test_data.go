@@ -23,7 +23,7 @@ var TdTextOnly = TestInput{
 
 var TdTitleSpecialChars = TestInput{
 	types.Note{
-		`\&\#\%\_\$\^`,
+		`\&\#\%\_\$\textasciicircum`,
 		"Sample url",
 		"Sample create date",
 		"Sample update date",
@@ -85,10 +85,13 @@ var TdNoteNewline = TestInput{
 		"Sample create date",
 		"Sample update date",
 		[]string{
-			`some text for test\\`,
+			`some text for test`,
+			`\\`,
 			``,
-			`another line with another\\`,
+			`another line with another`,
+			`\\`,
 			``,
+			`end`,
 		},
 	},
 	types.Note{
@@ -101,7 +104,7 @@ var TdNoteNewline = TestInput{
 			``,
 			`another line with another`,
 			``,
-			``,
+			`end`,
 		},
 	},
 }
@@ -144,9 +147,11 @@ var TdNoteItemize = TestInput{
 		[]string{
 			`some text with \url{link text} for test`,
 			`\begin{itemize}`,
-			`\item item 1`,
-			`\item item 2`,
-			`\item item 3`,
+			``,
+			"\t\\item item 1",
+			"\t\\item item 2",
+			"\t\\item item 3",
+			``,
 			`\end{itemize}`,
 		},
 	},
@@ -173,9 +178,11 @@ var TdNoteEnumerate = TestInput{
 		[]string{
 			`some text with \url{link text} for test`,
 			`\begin{enumerate}`,
-			`\item item 1`,
-			`\item item 2`,
-			`\item item 3`,
+			``,
+			"\t\\item item 1",
+			"\t\\item item 2",
+			"\t\\item item 3",
+			``,
 			`\end{enumerate}`,
 		},
 	},

@@ -1,12 +1,12 @@
 package main
 
 import (
-	"fmt"
-	"flag"
-	"log"
-	"os"
 	"cotonetes/parser"
 	"cotonetes/utils"
+	"flag"
+	"fmt"
+	"log"
+	"os"
 	"regexp"
 )
 
@@ -16,11 +16,11 @@ func main() {
 
 	flag.Parse()
 
-	if  _, error := os.Stat(*latex_notes_path_ptr); error != nil {
+	if _, error := os.Stat(*latex_notes_path_ptr); error != nil {
 		log.Fatal(fmt.Sprintf("Provided note folder does not exist!: %s", *latex_notes_path_ptr))
 	}
 
-	if  _, error := os.Stat(*db_path_ptr); error == nil {
+	if _, error := os.Stat(*db_path_ptr); error == nil {
 		if utils.User_confirmation(fmt.Sprintf("File %s already exists. Delete?", *db_path_ptr)) {
 			if e := os.Remove(*db_path_ptr); e != nil {
 				log.Fatal(e)
@@ -45,6 +45,9 @@ func main() {
 	category_re := regexp.MustCompile(regexp.QuoteMeta(*latex_notes_path_ptr) + string(os.PathSeparator) + `(.*)` + string(os.PathSeparator) + `.*$`)
 
 	for _, f := range file_notes {
+		if len(f.Notes) == 0 {
+			continue
+		}
 
 		file_path := f.File_path
 

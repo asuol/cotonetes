@@ -41,6 +41,9 @@ type LatexListener interface {
 	// EnterComposite_tag_separator is called when entering the composite_tag_separator production.
 	EnterComposite_tag_separator(c *Composite_tag_separatorContext)
 
+	// EnterUrl_tag is called when entering the url_tag production.
+	EnterUrl_tag(c *Url_tagContext)
+
 	// EnterSimple_tag is called when entering the simple_tag production.
 	EnterSimple_tag(c *Simple_tagContext)
 
@@ -68,11 +71,23 @@ type LatexListener interface {
 	// EnterVerbatim_symbol is called when entering the verbatim_symbol production.
 	EnterVerbatim_symbol(c *Verbatim_symbolContext)
 
+	// EnterVerbatim_special is called when entering the verbatim_special production.
+	EnterVerbatim_special(c *Verbatim_specialContext)
+
 	// EnterVerbatim_linebreak is called when entering the verbatim_linebreak production.
 	EnterVerbatim_linebreak(c *Verbatim_linebreakContext)
 
+	// EnterCurly_parens is called when entering the curly_parens production.
+	EnterCurly_parens(c *Curly_parensContext)
+
+	// EnterVerbatim_block_content is called when entering the verbatim_block_content production.
+	EnterVerbatim_block_content(c *Verbatim_block_contentContext)
+
 	// EnterVerbatim_line is called when entering the verbatim_line production.
 	EnterVerbatim_line(c *Verbatim_lineContext)
+
+	// EnterBlock_content is called when entering the block_content production.
+	EnterBlock_content(c *Block_contentContext)
 
 	// EnterBlock_line is called when entering the block_line production.
 	EnterBlock_line(c *Block_lineContext)
@@ -122,6 +137,9 @@ type LatexListener interface {
 	// ExitComposite_tag_separator is called when exiting the composite_tag_separator production.
 	ExitComposite_tag_separator(c *Composite_tag_separatorContext)
 
+	// ExitUrl_tag is called when exiting the url_tag production.
+	ExitUrl_tag(c *Url_tagContext)
+
 	// ExitSimple_tag is called when exiting the simple_tag production.
 	ExitSimple_tag(c *Simple_tagContext)
 
@@ -149,11 +167,23 @@ type LatexListener interface {
 	// ExitVerbatim_symbol is called when exiting the verbatim_symbol production.
 	ExitVerbatim_symbol(c *Verbatim_symbolContext)
 
+	// ExitVerbatim_special is called when exiting the verbatim_special production.
+	ExitVerbatim_special(c *Verbatim_specialContext)
+
 	// ExitVerbatim_linebreak is called when exiting the verbatim_linebreak production.
 	ExitVerbatim_linebreak(c *Verbatim_linebreakContext)
 
+	// ExitCurly_parens is called when exiting the curly_parens production.
+	ExitCurly_parens(c *Curly_parensContext)
+
+	// ExitVerbatim_block_content is called when exiting the verbatim_block_content production.
+	ExitVerbatim_block_content(c *Verbatim_block_contentContext)
+
 	// ExitVerbatim_line is called when exiting the verbatim_line production.
 	ExitVerbatim_line(c *Verbatim_lineContext)
+
+	// ExitBlock_content is called when exiting the block_content production.
+	ExitBlock_content(c *Block_contentContext)
 
 	// ExitBlock_line is called when exiting the block_line production.
 	ExitBlock_line(c *Block_lineContext)

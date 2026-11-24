@@ -9,7 +9,8 @@ note_title
     ;
 
 note_url
-    : '\\textbf{URL:} \\url{' word+ '}' '\\\\' NEWLINE?
+    // See comment to url_tag label below
+    : '\\textbf{URL:} \\url{' verbatim_content+ '}' '\\\\' NEWLINE?
     ;
 
 note_created
@@ -37,7 +38,8 @@ empty_line
     ;
 
 escaped_word
-    : '\\' content=(LETTER | SYMBOL)+ space=WS* NEWLINE?
+    : content=LETTER+ space=WS*
+    | content=(SYMBOL | '{' | '}') space=WS*
     ;
 
 composite_tag_separator
@@ -45,14 +47,19 @@ composite_tag_separator
     ;
 
 tag
-    : '\\' name=LETTER+ '{' word+ '}'                                 #simple_tag
+    // url tag needs to account for SYMBOL in addition to regular words, which cannot be escaped in the latex sense with backslash or dedicated symbol command, especially because 
+    // 1. Latex does not really need to escape the characters: at worst it ignores them and does not produce them
+    // 2. Symbols such as _ and % are valid URL characters, so url tag content is verbatim content
+    : '\\url{' verbatim_content+ '}'                                  #url_tag
+    | '\\' name=LETTER+ '{' word+ '}'                                 #simple_tag
     | '\\' name=LETTER+ '{' word+ composite_tag_separator word+ '}'   #composite_tag
     ;
 
 word
-    : escaped_word    #escaped
+    // content may be empty, this way it matches the backslash char
+    : '\\' escaped_word?    #escaped
     | LETTER          #letter
-    | PUNCTUATION     #punctuation
+    | (PUNCTUATION | EXTENDED_UNICODE)    #punctuation
     | NUMBER          #number
     | WS              #ws
     ;
@@ -60,64 +67,64 @@ word
 verbatim_content
     : word            #verbatim_word
     | SYMBOL          #verbatim_symbol
+    | SPECIAL         #verbatim_special
     | line_break      #verbatim_linebreak
     ;
 
+curly_parens
+    : ( '{' | '}' )
+    ;
+
+verbatim_block_content
+    : verbatim_content
+    | curly_parens
+    ;
+
 verbatim_line
-    : verbatim_content* NEWLINE
+    : verbatim_block_content* NEWLINE
+    ;
+
+block_content
+    : tag
+    | word
+    | curly_parens
     ;
 
 block_line
-    : word+ NEWLINE+
+    : block_content+ NEWLINE+
     ; 
 
 block_item
-    : '\\item' WS* block_line
+    : WS* '\\item' WS* block_line
     ;
 
 block
     : '\\begin{itemize}' NEWLINE* block_item* '\\end{itemize}' NEWLINE?       #itemize
     | '\\begin{enumerate}' NEWLINE* block_item* '\\end{enumerate}' NEWLINE?   #enumerate
-    | '\\begin{verbatim}' NEWLINE? verbatim_line* '\\end{verbatim}' NEWLINE?     #verbatim
+    | '\\begin{verbatim}' NEWLINE? verbatim_line* '\\end{verbatim}' NEWLINE?  #verbatim
     ;
 
 LETTER
     : [\p{L}]+
     ;
 
-PUNCTUATION
-    // all the punctuation that does not require escaping in latex
-    : (
-          '.'
-        | ','
-        | ';'
-        | ':'
-        | '!'
-        | '?'
-        | '-'
-        | '\''
-        | '"'
-        | '('
-        | ')'
-        | '['
-        | ']'
-        | '/'
-        | '@'
-        | '*'
-        | '+'
-        | '='
-        )+
+SPECIAL
+    // all chars that require a dedicated latex command
+    : '~'
+    | '^'
+    | '|'
     ;
 
 SYMBOL
+    // all chars that can be directly escaped in latex
     : '#'
     | '$'
     | '%'
     | '&'
-    | '_'
-    | '^'
     | '>'
     | '<'
+    | '€'
+    | '_'
     ;
 
 NUMBER
@@ -141,4 +148,22 @@ WS
 
 CR
     : '\r' -> skip
+    ;
+
+PUNCTUATION
+    // all the punctuation that does not require escaping in latex
+    // NOTE: this rule intends to match all chars that are not mentioned in the above lexer rules, including the string literals in the parser rules (antlr creates lexer rules for those inderectly) (order of precedence)
+    // Punctuation except curly braces. These are to be handled as literals in the parser rules
+    : [\p{Pc}]
+    | [\p{Pd}]
+    | [\p{Pi}]
+    | [\p{Pf}]
+    | [\p{Po}]
+    | ( '(' | ')' | '[' | ']' )
+    | [\p{S}]
+    | [\p{Z}]
+    ;
+
+EXTENDED_UNICODE
+    : [\u0001-\uFFFF]
     ;

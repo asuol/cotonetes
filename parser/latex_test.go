@@ -47,9 +47,8 @@ func LatexParserTest(t *testing.T, folder_path string, expected_markdown types.N
 	utils.FailNotEquals(t, "Failed to process note created date", expected_markdown.Created_date, processed_note.Created_date)
 	utils.FailNotEquals(t, "Failed to process note updated date", expected_markdown.Updated_date, processed_note.Updated_date)
 
-	emptyline, note_content := processed_note.Text[0], processed_note.Text[1:]
 
-	utils.FailNotEquals(t, "Failed to process note empty line preamble", "", emptyline)
+	note_content := processed_note.Text
 
 	utils.FailNotEqualsSlice(t, "Failed to process note content line", expected_markdown.Text, note_content)
 }

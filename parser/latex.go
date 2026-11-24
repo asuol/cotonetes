@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"cotonetes/latex_parser"
 	"cotonetes/types"
+	"cotonetes/utils"
 	"fmt"
 	"github.com/antlr4-go/antlr/v4"
 	"log"
@@ -35,12 +36,6 @@ func latex_note_title_to_txt(line string) string {
 	return match[1]
 }
 
-func latex_note_url_to_txt(line string) string {
-	line_net_content := latex_note_title_to_txt(line)
-	re := regexp.MustCompile(`\\url{(.*)}`)
-	return re.FindStringSubmatch(line_net_content)[1]
-}
-
 type LatexListener struct {
 	*latex_parser.BaseLatexListener
 
@@ -50,10 +45,12 @@ type LatexListener struct {
 	Updated                string
 	composite_first_val    string
 	Note                   []string
+	block_line_stack       []string
 	block_stack            []string
 	word_stack             []string
 	text_stack             []string
 	verbatim_content_stack []string
+	is_block_line          bool
 	is_verbatim_block      bool
 }
 
@@ -65,6 +62,16 @@ func (s *LatexListener) getWord() string {
 	return word
 }
 
+func (s *LatexListener) enterTag() {
+	if s.word_stack != nil {
+		if s.is_block_line {
+			s.block_line_stack = append(s.block_line_stack, s.getWord())
+		} else {
+			s.text_stack = append(s.text_stack, s.getWord())
+		}
+	}
+}
+
 // a line break and an empty line both mean a single empty line, even if combined or there are multiple empty lines
 func (s *LatexListener) addParagraph() {
 	if s.is_verbatim_block == false && (s.Note == nil || s.Note[len(s.Note)-1] != "") {
@@ -72,30 +79,48 @@ func (s *LatexListener) addParagraph() {
 	}
 }
 
+func (s *LatexListener) EnterUrl_tag(ctx *latex_parser.Url_tagContext) {
+	s.enterTag()
+}
+
 func (s *LatexListener) EnterSimple_tag(ctx *latex_parser.Simple_tagContext) {
-	if s.word_stack != nil {
-		s.text_stack = append(s.text_stack, s.getWord())
-	}
+	s.enterTag()
 }
 
 func (s *LatexListener) EnterComposite_tag(ctx *latex_parser.Composite_tagContext) {
-	if s.word_stack != nil {
-		s.text_stack = append(s.text_stack, s.getWord())
-	}
+	s.enterTag()
 }
 
 func (s *LatexListener) ExitSimple_tag(ctx *latex_parser.Simple_tagContext) {
 	tagVal := s.getWord()
 	switch ctx.GetName().GetText() {
 	case "textbf":
-		s.text_stack = append(s.text_stack, fmt.Sprintf("**%s**", tagVal))
-	case "url":
-		s.text_stack = append(s.text_stack, fmt.Sprintf("[%s](%s)", tagVal, tagVal))
+		if s.is_block_line {
+			s.block_line_stack = append(s.block_line_stack, fmt.Sprintf("**%s**", tagVal))
+		} else {
+			s.text_stack = append(s.text_stack, fmt.Sprintf("**%s**", tagVal))
+		}
 	case "href":
-		s.text_stack = append(s.text_stack, fmt.Sprintf("[%s](%s)", tagVal, tagVal))
+		if s.is_block_line {
+			s.block_line_stack = append(s.block_line_stack, fmt.Sprintf("[%s](%s)", tagVal, tagVal))
+		} else {
+			s.text_stack = append(s.text_stack, fmt.Sprintf("[%s](%s)", tagVal, tagVal))
+		}
 	default:
 		log.Fatalf("Unknown simple tag: %s", ctx.GetText())
 	}
+}
+
+func (s *LatexListener) ExitUrl_tag(ctx *latex_parser.Url_tagContext) {
+	url := strings.Join(s.verbatim_content_stack, "")
+
+	if s.is_block_line {
+		s.block_line_stack = append(s.block_line_stack, fmt.Sprintf("[%s](%s)", url, url))
+	} else {
+		s.text_stack = append(s.text_stack, fmt.Sprintf("[%s](%s)", url, url))
+	}
+
+	s.verbatim_content_stack = nil
 }
 
 func (s *LatexListener) ExitComposite_tag_separator(ctx *latex_parser.Composite_tag_separatorContext) {
@@ -105,7 +130,11 @@ func (s *LatexListener) ExitComposite_tag_separator(ctx *latex_parser.Composite_
 func (s *LatexListener) ExitComposite_tag(ctx *latex_parser.Composite_tagContext) {
 	switch ctx.GetName().GetText() {
 	case "href":
-		s.text_stack = append(s.text_stack, fmt.Sprintf("[%s](%s)", s.composite_first_val, s.getWord()))
+		if s.is_block_line {
+			s.block_line_stack = append(s.block_line_stack, fmt.Sprintf("[%s](%s)", s.composite_first_val, s.getWord()))
+		} else {
+			s.text_stack = append(s.text_stack, fmt.Sprintf("[%s](%s)", s.composite_first_val, s.getWord()))
+		}
 	default:
 		log.Fatalf("Unknown composite tag: %s", ctx.GetText())
 	}
@@ -116,7 +145,9 @@ func (s *LatexListener) ExitNote_title(ctx *latex_parser.Note_titleContext) {
 }
 
 func (s *LatexListener) ExitNote_url(ctx *latex_parser.Note_urlContext) {
-	s.Url = s.getWord()
+	s.Url = strings.Join(s.verbatim_content_stack, "")
+
+	s.verbatim_content_stack = nil
 }
 
 func (s *LatexListener) ExitNote_created(ctx *latex_parser.Note_createdContext) {
@@ -137,12 +168,47 @@ func (s *LatexListener) ExitText(ctx *latex_parser.TextContext) {
 }
 
 func (s *LatexListener) ExitEscaped_word(ctx *latex_parser.Escaped_wordContext) {
-	content := ctx.GetContent().GetText()
+	content := `\`
+
+	// in verbatim mode the backslash is already accounted for
+	if s.is_verbatim_block {
+		content = ""
+	}
+
+	if ctx.GetContent() != nil {
+		content = ctx.GetContent().GetText()
+	}
+
+	prefixes := []string{"textasciitilde", "textasciicircum", "vert"}
+
+	for _, prefix := range prefixes {
+		if remainder, found := strings.CutPrefix(content, prefix); found {
+			switch prefix {
+			case "textasciitilde":
+				content = "~"
+			case "textasciicircum":
+				content = "^"
+			case "vert":
+				content = "|"
+			}
+
+			content = content + remainder
+
+			break
+		}
+	}
+
 	space := ""
 	if ctx.GetSpace() != nil {
 		space = ctx.GetSpace().GetText()
 	}
 	s.word_stack = append(s.word_stack, content+space)
+}
+
+func (s *LatexListener) EnterEscaped(ctx *latex_parser.EscapedContext) {
+	if s.is_verbatim_block {
+		s.word_stack = append(s.word_stack, `\`)
+	}
 }
 
 func (s *LatexListener) ExitLetter(ctx *latex_parser.LetterContext) {
@@ -169,8 +235,28 @@ func (s *LatexListener) ExitEmpty_line(ctx *latex_parser.Empty_lineContext) {
 	s.addParagraph()
 }
 
+func (s *LatexListener) EnterBlock_line(ctx *latex_parser.Block_lineContext) {
+	s.is_block_line = true
+}
+
 func (s *LatexListener) ExitBlock_line(ctx *latex_parser.Block_lineContext) {
-	s.block_stack = append(s.block_stack, s.getWord())
+	if s.block_line_stack != nil {
+		s.block_stack = append(s.block_stack, strings.Join(s.block_line_stack, ""))
+	} else {
+		s.block_stack = append(s.block_stack, s.getWord())
+	}
+
+	s.block_line_stack = nil
+
+	s.is_block_line = false
+}
+
+func (s *LatexListener) ExitCurly_parens(ctx *latex_parser.Curly_parensContext) {
+	if s.is_verbatim_block {
+		s.verbatim_content_stack = append(s.verbatim_content_stack, ctx.GetText())
+	} else {
+		s.word_stack = append(s.word_stack, ctx.GetText())
+	}
 }
 
 func (s *LatexListener) ExitItemize(ctx *latex_parser.ItemizeContext) {
@@ -194,6 +280,10 @@ func (s *LatexListener) ExitVerbatim_word(ctx *latex_parser.Verbatim_wordContext
 }
 
 func (s *LatexListener) ExitVerbatim_symbol(ctx *latex_parser.Verbatim_symbolContext) {
+	s.verbatim_content_stack = append(s.verbatim_content_stack, ctx.GetText())
+}
+
+func (s *LatexListener) ExitVerbatim_special(ctx *latex_parser.Verbatim_specialContext) {
 	s.verbatim_content_stack = append(s.verbatim_content_stack, ctx.GetText())
 }
 
@@ -225,22 +315,69 @@ func (s *LatexListener) ExitVerbatim(ctx *latex_parser.VerbatimContext) {
 	s.is_verbatim_block = false
 }
 
-func latex_to_note(latex_note []string) types.Note {
+type CustomSyntaxError struct {
+	line, column int
+	msg          string
+}
+
+func (s *CustomSyntaxError) Error() string {
+	return fmt.Sprintf("line %d column %d: %s", s.line, s.column, s.msg)
+}
+
+type CustomErrorListener struct {
+	*antlr.DefaultErrorListener
+	Errors      []error
+	line_offset int
+}
+
+func (c *CustomErrorListener) SyntaxError(recognizer antlr.Recognizer, offendingSymbol interface{}, line, column int, msg string, e antlr.RecognitionException) {
+	c.Errors = append(c.Errors, &CustomSyntaxError{
+		line:   c.line_offset + line,
+		column: column,
+		msg:    msg,
+	})
+}
+
+func latex_to_note(latex_note []string, line_num int) types.Note {
 	// Setup the input, replicating a text file (lines ending with newline)
 	is := antlr.NewInputStream(strings.Join(latex_note, "\n"))
 
 	// Create the Lexer
 	lexer := latex_parser.NewLatexLexer(is)
 
+	lexerErrors := &CustomErrorListener{line_offset: line_num}
+	lexer.RemoveErrorListeners()
+	lexer.AddErrorListener(lexerErrors)
+
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
 	// Create the Parser
 	p := latex_parser.NewLatexParser(stream)
 
+	parserErrors := &CustomErrorListener{line_offset: line_num}
+	p.RemoveErrorListeners()
+	p.AddErrorListener(parserErrors)
+
 	var listener LatexListener
 
 	// Finally parse the expression
 	antlr.ParseTreeWalkerDefault.Walk(&listener, p.Latex())
+
+	if len(lexerErrors.Errors) > 0 {
+		fmt.Printf("Lexer %d errors found\n", len(lexerErrors.Errors))
+		for _, e := range lexerErrors.Errors {
+			fmt.Println("\t", e.Error())
+		}
+	}
+
+	if len(parserErrors.Errors) > 0 {
+		fmt.Printf("Parser %d errors found\n", len(parserErrors.Errors))
+		for _, e := range parserErrors.Errors {
+			fmt.Println("\t", e.Error())
+		}
+	}
+
+	listener.Note = utils.Trim_note(listener.Note)
 
 	return types.Note{
 		listener.Title,
@@ -267,15 +404,22 @@ func process_latex_file(file_path string) []types.Note {
 	cur_note := make([]string, 0, 20)
 	notes := make([]types.Note, 0)
 
+	start_line := 0
+	line_counter := 0
+
 	for scanner.Scan() {
 		line := scanner.Text()
 
+		line_counter += 1
+
 		if !is_note && strings.HasPrefix(line, "\\textbf{Title:}") {
 			is_note = true
+			start_line += line_counter - 1
+			line_counter = 1
 		}
 		if is_note {
 			if strings.HasPrefix(line, "\\hrulefill") {
-				notes = append(notes, latex_to_note(cur_note))
+				notes = append(notes, latex_to_note(cur_note, start_line))
 
 				cur_note = nil
 				is_note = false
